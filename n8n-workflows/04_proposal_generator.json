@@ -1,0 +1,76 @@
+{
+  "name": "Dynasty_Proposal_Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dynasty-proposal",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "proposal-trigger",
+      "name": "Proposal Request Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "notes": "Triggered from intake form submission or manual CRM action"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json.body || $input.first().json;\n\n// Package pricing database\nconst PRICING = {\n  'ai-lead-nurture': { setup: 4500, monthly: 750, name: 'AI-Powered Lead Nurture Engine' },\n  'ai-support-bot': { setup: 3500, monthly: 500, name: 'AI Customer Support Bot' },\n  'ai-booking': { setup: 2500, monthly: 400, name: 'Appointment Booking & Follow-Up' },\n  'ai-content-pipeline': { setup: 3000, monthly: 1200, name: 'AI Content Pipeline' },\n  'ai-ops-suite': { setup: 5500, monthly: 800, name: 'Business Operations Suite' },\n  'ai-phone': { setup: 4000, monthly: 600, name: 'AI Phone System' },\n  'ai-audit': { setup: 7500, monthly: 0, name: 'AI Workflow Audit' },\n  'web-gov-saas': { setup: 20000, monthly: 1500, name: 'Gov & Compliance SaaS Platform' },\n  'web-pro-site': { setup: 3000, monthly: 0, name: 'Professional Services Website' },\n  'web-authority': { setup: 3500, monthly: 800, name: 'Authority Niche Site' },\n  'web-portal': { setup: 10000, monthly: 800, name: 'Client Portal & Dashboard' },\n  'web-landing': { setup: 2000, monthly: 0, name: 'Landing Page Conversion System' },\n  'web-saas-mvp': { setup: 14000, monthly: 1000, name: 'Full-Stack SaaS MVP' },\n  'dir-turnkey': { setup: 5000, monthly: 500, name: 'Turnkey Niche Directory' },\n  'dir-suite': { setup: 8500, monthly: 1000, name: 'Directory + SuiteDash Bundle' },\n  'dir-portfolio': { setup: 12000, monthly: 1500, name: 'Directory Portfolio (3-Pack)' },\n  'ugc-youtube': { setup: 3000, monthly: 1500, name: 'Faceless YouTube Channel' },\n  'ugc-brand': { setup: 2000, monthly: 2000, name: 'UGC Brand Content Package' },\n  'ugc-repurpose': { setup: 800, monthly: 2500, name: 'Content Repurposing Engine' },\n  'host-wp': { setup: 0, monthly: 149, name: 'Managed WordPress Hosting' },\n  'host-app': { setup: 0, monthly: 149, name: 'App Hosting (Vercel + 20i)' },\n  'biz-llc': { setup: 2500, monthly: 0, name: 'LLC Formation & Business-in-a-Box' },\n  'biz-entity': { setup: 7500, monthly: 0, name: 'Multi-Entity Structuring' },\n  'biz-tax': { setup: 0, monthly: 250, name: 'Tax Strategy & Compliance' },\n  'biz-notary': { setup: 200, monthly: 0, name: 'Notary & Document Services' },\n  'ux-sprint': { setup: 10000, monthly: 0, name: 'UX Research Sprint (2-Week)' },\n  'ux-ai-assessment': { setup: 12500, monthly: 0, name: 'AI/UX Readiness Assessment' },\n  'ux-fractional': { setup: 0, monthly: 6500, name: 'Fractional Head of Research' },\n  'ux-academic': { setup: 20000, monthly: 0, name: 'Academic-Industry Research Bridge' },\n  're-creative': { setup: 2000, monthly: 500, name: 'Creative Finance Deal Structuring' },\n  're-tech': { setup: 4000, monthly: 600, name: 'RE Investor Tech Stack' }\n};\n\nconst packages = (data.package_ids || []).map(id => PRICING[id]).filter(Boolean);\nconst totalSetup = packages.reduce((s, p) => s + p.setup, 0);\nconst totalMonthly = packages.reduce((s, p) => s + p.monthly, 0);\nconst bundleDiscount = packages.length >= 3 ? 0.15 : 0;\nconst discountedSetup = Math.round(totalSetup * (1 - bundleDiscount));\n\nreturn [{\n  json: {\n    client_name: data.client_name,\n    client_email: data.client_email,\n    client_company: data.client_company,\n    packages,\n    package_count: packages.length,\n    total_setup: totalSetup,\n    total_monthly: totalMonthly,\n    bundle_discount: bundleDiscount,\n    discounted_setup: discountedSetup,\n    proposal_number: `DE-2026-${Date.now().toString().slice(-6)}`,\n    valid_until: new Date(Date.now() + 14*24*60*60*1000).toISOString().split('T')[0],\n    created_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "calculate-proposal",
+      "name": "Calculate Proposal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.documentero.com/api/v1/template/render",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ template_id: 'dynasty_proposal_template', data: { client_name: $json.client_name, client_company: $json.client_company, packages: $json.packages.map(p => p.name).join(', '), total_setup: '$' + $json.discounted_setup.toLocaleString(), total_monthly: '$' + $json.total_monthly.toLocaleString() + '/mo', proposal_number: $json.proposal_number, valid_until: $json.valid_until, bundle_discount: $json.bundle_discount > 0 ? '15% bundle discount applied' : '' } }) }}"
+      },
+      "id": "generate-pdf",
+      "name": "Generate Proposal PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300],
+      "notes": "Uses Documentero to generate branded PDF proposal"
+    },
+    {
+      "parameters": {
+        "fromEmail": "ike@dynastyempire.com",
+        "toEmail": "={{ $json.client_email }}",
+        "subject": "Your Dynasty Empire Proposal — {{ $json.proposal_number }}",
+        "emailType": "html",
+        "html": "<div style='font-family:Arial;max-width:600px;margin:0 auto;'><div style='background:#0A0A0C;padding:32px;border-radius:12px 12px 0 0;'><h1 style='color:#FBBF24;margin:0;'>Your Proposal is Ready</h1></div><div style='background:#18181B;padding:32px;color:#D4D4D8;'><p>Hi {{ $json.client_name }},</p><p>Your proposal for <strong style='color:#FBBF24;'>{{ $json.package_count }} package(s)</strong> is attached.</p><p><strong>Total Investment:</strong> {{ $json.discounted_setup > 0 ? '$' + $json.discounted_setup.toLocaleString() + ' setup' : '' }} {{ $json.total_monthly > 0 ? '+ $' + $json.total_monthly.toLocaleString() + '/mo' : '' }}</p>{{ $json.bundle_discount > 0 ? '<p style=\"color:#4ADE80;\">✓ 15% bundle discount applied!</p>' : '' }}<p>This proposal is valid until <strong>{{ $json.valid_until }}</strong>.</p><p>Ready to proceed? Reply to this email or <a href=\"https://dynasty-services.vercel.app\" style=\"color:#FBBF24;\">book a call</a>.</p></div></div>"
+      },
+      "id": "send-proposal-email",
+      "name": "Email Proposal to Client",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, proposal: $json.proposal_number }) }}"
+      },
+      "id": "respond",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Proposal Request Webhook": {"main": [[{"node": "Calculate Proposal", "type": "main", "index": 0}]]},
+    "Calculate Proposal": {"main": [[{"node": "Generate Proposal PDF", "type": "main", "index": 0}]]},
+    "Generate Proposal PDF": {"main": [[{"node": "Email Proposal to Client", "type": "main", "index": 0}]]},
+    "Email Proposal to Client": {"main": [[{"node": "Respond OK", "type": "main", "index": 0}]]}
+  },
+  "tags": [{"name": "dynasty-empire"}, {"name": "proposals"}]
+}

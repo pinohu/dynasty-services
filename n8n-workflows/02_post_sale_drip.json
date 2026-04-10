@@ -1,0 +1,62 @@
+{
+  "name": "Dynasty_Post_Sale_Drip",
+  "nodes": [
+    {
+      "parameters": {"rule": {"interval": [{"field": "hours", "hoursInterval": 6}]}},
+      "id": "schedule",
+      "name": "Check Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Query clients who need drip emails\n// This connects to your Neon DB to find clients at specific drip stages\nconst now = new Date();\nconst clients = [\n  // Placeholder - replace with actual Neon query\n  // { name, email, package, signup_date, drip_stage, last_drip_sent }\n];\n\nconst dripSchedule = {\n  1: { days: 1, subject: 'Here\\'s what to expect this week', template: 'drip_day1' },\n  2: { days: 3, subject: 'Please complete your intake form', template: 'drip_day3' },\n  3: { days: 7, subject: 'Week 1 progress update', template: 'drip_week1' },\n  4: { days: 14, subject: 'Halfway check-in', template: 'drip_week2' },\n  5: { days: 21, subject: 'Final week — launch prep', template: 'drip_week3' },\n  6: { days: 30, subject: 'You\\'re live! Here\\'s your retainer details', template: 'drip_launch' },\n  7: { days: 45, subject: 'How\\'s everything running?', template: 'drip_checkin' },\n  8: { days: 60, subject: '30-day retainer review + optimization ideas', template: 'drip_review' },\n  9: { days: 90, subject: 'Quarter review — cross-sell opportunity', template: 'drip_quarter' },\n};\n\nreturn clients.map(c => ({ json: { ...c, drip: dripSchedule[c.drip_stage] } }));"
+      },
+      "id": "check-drips",
+      "name": "Find Clients Needing Drips",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "ike@dynastyempire.com",
+        "toEmail": "={{ $json.email }}",
+        "subject": "={{ $json.drip.subject }} — {{ $json.package }}",
+        "emailType": "html",
+        "html": "={{ $json.drip_html }}",
+        "options": {}
+      },
+      "id": "send-drip",
+      "name": "Send Drip Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.sms-it.com/api/v1/sms/send",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "to", "value": "={{ $json.phone }}"},
+            {"name": "message", "value": "={{ $json.drip_sms }}"},
+            {"name": "from", "value": "+1XXXXXXXXXX"}
+          ]
+        }
+      },
+      "id": "send-drip-sms",
+      "name": "Send Drip SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 460]
+    }
+  ],
+  "connections": {
+    "Check Every 6 Hours": {"main": [[{"node": "Find Clients Needing Drips", "type": "main", "index": 0}]]},
+    "Find Clients Needing Drips": {"main": [[{"node": "Send Drip Email", "type": "main", "index": 0}, {"node": "Send Drip SMS", "type": "main", "index": 0}]]}
+  },
+  "tags": [{"name": "dynasty-empire"}, {"name": "drip-sequence"}]
+}

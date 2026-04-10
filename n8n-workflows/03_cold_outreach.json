@@ -1,0 +1,61 @@
+{
+  "name": "Dynasty_Cold_Outreach_Engine",
+  "nodes": [
+    {
+      "parameters": {"rule": {"interval": [{"field": "days", "daysInterval": 1}]}},
+      "id": "daily-trigger",
+      "name": "Daily at 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fetch prospects from Neon DB who need their next email\n// Sequences: AI Automation (4 emails), Web Dev (3 emails), Directory (3 emails)\nconst sequences = {\n  'ai-automation': [\n    { day: 0, subject: 'Your {industry} business is manually doing what AI can automate', template: 'ai_cold_1' },\n    { day: 3, subject: '3 automations every {industry} business should have', template: 'ai_cold_2' },\n    { day: 7, subject: 'How a compliance company automated 80% of operations', template: 'ai_cold_3' },\n    { day: 14, subject: 'Last note from me', template: 'ai_cold_4' }\n  ],\n  'web-dev': [\n    { day: 0, subject: 'Your website is costing you clients', template: 'web_cold_1' },\n    { day: 4, subject: 'What a $3K website should actually include', template: 'web_cold_2' },\n    { day: 8, subject: 'Your competitors are investing in their online presence', template: 'web_cold_3' }\n  ],\n  'directory': [\n    { day: 0, subject: 'A recurring-revenue business you can launch in 2 weeks', template: 'dir_cold_1' },\n    { day: 4, subject: 'The math on a niche directory business', template: 'dir_cold_2' },\n    { day: 10, subject: '5 niches that need a directory right now', template: 'dir_cold_3' }\n  ]\n};\n\n// Replace with actual Neon DB query\nreturn [{ json: { sequences, timestamp: new Date().toISOString() } }];"
+      },
+      "id": "fetch-prospects",
+      "name": "Fetch Due Prospects",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://acumbamail.com/api/1/sendOne/",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "auth_token", "value": "YOUR_ACUMBAMAIL_TOKEN"},
+            {"name": "from_email", "value": "ike@dynastyempire.com"},
+            {"name": "from_name", "value": "Dr. Ike Ohu"},
+            {"name": "to_email", "value": "={{ $json.prospect_email }}"},
+            {"name": "subject", "value": "={{ $json.email_subject }}"},
+            {"name": "body", "value": "={{ $json.email_body }}"}
+          ]
+        }
+      },
+      "id": "send-email",
+      "name": "Send via Acumbamail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log send to Neon DB, update drip stage\nconst sent = $input.first().json;\nconsole.log(`Email sent to ${sent.prospect_email}: ${sent.email_subject}`);\nreturn [{ json: { logged: true, ...sent } }];"
+      },
+      "id": "log-send",
+      "name": "Log to DB",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Daily at 9am": {"main": [[{"node": "Fetch Due Prospects", "type": "main", "index": 0}]]},
+    "Fetch Due Prospects": {"main": [[{"node": "Send via Acumbamail", "type": "main", "index": 0}]]},
+    "Send via Acumbamail": {"main": [[{"node": "Log to DB", "type": "main", "index": 0}]]}
+  },
+  "tags": [{"name": "dynasty-empire"}, {"name": "cold-outreach"}]
+}

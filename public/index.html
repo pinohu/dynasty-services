@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynasty Empire — Done-For-You Services</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#09090b;--card:#18181b;--border:#27272a;--text:#fafafa;--muted:#a1a1aa;--dim:#71717a;--gold:#fbbf24;--gold-dark:#92700e}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{color:var(--gold);text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:100;background:rgba(9,9,11,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px}
+nav .inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:56px}
+nav .logo{font-weight:900;font-size:16px;letter-spacing:-0.5px}
+nav .logo span:first-child{color:var(--gold)}
+nav .logo span:last-child{color:var(--dim)}
+nav .cta-btn{background:var(--gold);color:#000;border:none;padding:8px 20px;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer}
+
+/* Hero */
+.hero{text-align:center;padding:80px 24px 60px}
+.hero .badge{display:inline-block;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:20px;padding:6px 18px;margin-bottom:24px;font-size:12px;font-weight:600;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,60px);line-height:1.08;max-width:750px;margin:0 auto 20px;letter-spacing:-1px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero p{color:var(--muted);font-size:17px;max-width:560px;margin:0 auto 36px}
+
+/* Filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:0 24px 48px}
+.filter-btn{background:var(--card);color:var(--dim);border:1px solid var(--border);padding:7px 18px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.filter-btn.active,.filter-btn:hover{background:rgba(251,191,36,.12);color:var(--gold);border-color:rgba(251,191,36,.3)}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;padding-bottom:80px}
+.pkg-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 24px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.pkg-card:hover{border-color:rgba(251,191,36,.3);transform:translateY(-2px)}
+.pkg-card .bar{position:absolute;top:0;left:0;right:0;height:3px}
+.pkg-card .vertical-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.pkg-card h3{font-size:17px;font-weight:700;margin-bottom:8px;line-height:1.25}
+.pkg-card .desc{color:var(--dim);font-size:13px;line-height:1.5;margin-bottom:18px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pkg-card .price{font-size:22px;font-weight:900}
+.pkg-card .retainer{font-size:13px;font-weight:600}
+.pkg-card .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.pkg-card .tags span{background:rgba(255,255,255,.04);padding:3px 10px;border-radius:12px;font-size:11px;color:var(--muted)}
+
+/* Detail Page */
+.detail{display:none;padding:40px 0 80px}
+.detail.active{display:block}
+.back-btn{background:none;border:1px solid var(--border);color:var(--dim);padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px;margin-bottom:32px}
+.detail-hero{border-radius:16px;padding:48px 40px;margin-bottom:32px;border:1px solid}
+.detail-hero .label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px}
+.detail-hero h1{font-family:'DM Serif Display',serif;font-size:34px;margin:12px 0 14px;line-height:1.15}
+.detail-hero .subdesc{color:var(--muted);font-size:16px;line-height:1.6;max-width:580px}
+.stat-boxes{display:flex;gap:20px;margin-top:28px;flex-wrap:wrap}
+.stat-box{background:rgba(255,255,255,.05);border-radius:10px;padding:16px 24px}
+.stat-box .stat-label{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+.stat-box .stat-value{font-size:26px;font-weight:800;margin-top:4px}
+
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px}
+@media(max-width:700px){.detail-grid{grid-template-columns:1fr}}
+.detail-panel{background:var(--card);border-radius:14px;padding:32px 28px;border:1px solid var(--border)}
+.detail-panel h3{font-size:17px;font-weight:700;margin-bottom:18px}
+.check-item{display:flex;gap:10px;margin-bottom:11px;align-items:flex-start}
+.check-item .check{font-size:15px;margin-top:2px}
+.check-item span{color:#d4d4d8;font-size:14px}
+
+.case-study-box{background:var(--card);border-radius:14px;padding:32px 28px;border:1px solid var(--border);margin-bottom:32px}
+.case-study-box h3{font-size:20px;font-weight:700;margin-bottom:12px}
+.case-study-box .headline{color:#d4d4d8;font-size:15px;line-height:1.6;margin-bottom:16px}
+.metric-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.metric-tag{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.tech-stack{color:var(--dim);font-size:12px;font-family:'DM Mono',monospace}
+
+.detail-cta{border-radius:14px;padding:40px 32px;text-align:center;border:1px solid;margin-bottom:32px}
+.detail-cta h3{font-size:22px;font-weight:700;margin-bottom:10px}
+.detail-cta p{color:var(--muted);margin-bottom:24px;font-size:14px}
+.detail-cta button{border:none;padding:14px 36px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
+
+/* Email Sequence Section */
+.email-section{background:var(--card);border-radius:14px;padding:32px 28px;border:1px solid var(--border);margin-bottom:24px}
+.email-section h3{font-size:17px;font-weight:700;margin-bottom:16px}
+.email-item{border-left:3px solid var(--gold);padding:12px 16px;margin-bottom:12px;background:rgba(255,255,255,.02);border-radius:0 8px 8px 0}
+.email-item .day{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.email-item .subject{font-weight:600;font-size:14px;margin-bottom:4px}
+.email-item .preview{color:var(--dim);font-size:12px;line-height:1.5}
+
+/* Social Content Section */
+.social-section{background:var(--card);border-radius:14px;padding:32px 28px;border:1px solid var(--border);margin-bottom:24px}
+.social-post{background:rgba(255,255,255,.03);border-radius:10px;padding:16px;margin-bottom:12px}
+.social-post .platform{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.social-post .content{font-size:13px;line-height:1.6;color:#d4d4d8;white-space:pre-line}
+
+/* Intake Form */
+.intake-section{background:var(--card);border-radius:14px;padding:32px 28px;border:1px solid var(--border);margin-bottom:24px}
+.form-field{margin-bottom:16px}
+.form-field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.form-field input,.form-field select,.form-field textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:14px;font-family:inherit}
+.form-field textarea{resize:vertical;min-height:80px}
+.submit-btn{width:100%;background:var(--gold);color:#000;border:none;padding:14px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px}
+
+/* Proposal Preview */
+.proposal-section{background:var(--card);border-radius:14px;padding:32px 28px;border:1px solid var(--border);margin-bottom:24px}
+.proposal-page{background:#fff;color:#111;border-radius:8px;padding:32px;margin-bottom:16px;font-size:13px;line-height:1.6}
+.proposal-page h4{color:var(--gold-dark);font-size:16px;margin-bottom:8px;font-family:'DM Serif Display',serif}
+.proposal-page .gold-bar{height:4px;background:var(--gold);width:60px;margin-bottom:16px;border-radius:2px}
+
+/* Footer */
+footer{background:#111113;border-top:1px solid var(--border);padding:40px 24px;text-align:center}
+footer p{color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="inner">
+<div class="logo"><span>DYNASTY</span> <span>EMPIRE</span></div>
+<button class="cta-btn" onclick="showSection('intake-global')">Book Strategy Call</button>
+</div>
+</nav>
+
+<div id="app"></div>
+<footer><p>Dynasty Empire LLC — 924 W 23rd St, Erie, PA 16502 — Dr. Ikechukwu Ohu, CEO</p></footer>
+
+<script>
+const PACKAGES = [
+  {id:"ai-lead-nurture",v:"AI Automation",name:"AI-Powered Lead Nurture Engine",price:4500,ret:750,desc:"Fully built n8n workflow capturing leads, scoring them, routing hot leads to SMS/email/call sequences, pushing to CRM.",features:["Lead capture & scoring","SMS/Email drip sequences","AI voice agent setup","CRM integration","Hot lead alerts","Dashboard reporting"],persona:"Service businesses doing $500K–$5M/yr drowning in leads",cs:"pacrop",timeline:"2 weeks",
+    emails:[{day:"Day 0",subj:"Your leads are going cold",preview:"73% of leads never get a follow-up. I built a system that responds in under 60 seconds."},{day:"Day 3",subj:"3 automations every service business needs",preview:"Missed call text-back, lead scoring + instant alerts, automated review requests."},{day:"Day 7",subj:"Case study: 146 API endpoints, zero manual follow-up",preview:"PA CROP Services went from manual to fully automated lead nurture."},{day:"Day 14",subj:"Last note — the math on lost leads",preview:"50 leads/week × 10 min each = 8 hours. My system handles it in seconds."}],
+    social:[{platform:"LinkedIn",content:"I built a lead nurture engine that responds to new leads in under 60 seconds.\n\nBefore: Leads sitting in inbox for 4+ hours\nAfter: AI voice agent calls back instantly, SMS confirms, email drip starts\n\nThe system runs on n8n + Insighto + SMS-iT + Acumbamail.\nSetup: $4,500. Monthly: $750.\nROI shows up in week 1.\n\nDM 'NURTURE' for details."},{platform:"Twitter/X",content:"Thread: How I built a lead nurture engine that never sleeps 🧵\n\n1/ Most businesses lose 40-60% of leads because follow-up takes too long.\n2/ I built an n8n workflow that captures → scores → routes → nurtures automatically.\n3/ Hot leads get called within 60 seconds by an AI voice agent.\n4/ Cold leads enter a 5-touch SMS + email sequence.\n5/ The whole thing costs $750/mo to run and replaces 8+ hours/week of manual work."}],
+    intake_fields:["Current lead volume/month","Lead sources (forms, ads, referrals)","Current CRM system","Average deal value","Current follow-up process"],
+    n8n_steps:["Webhook trigger (form/ad platform)","Lead scoring algorithm (source + behavior)","Hot lead: instant SMS + voice call via Insighto","Warm lead: 5-touch email drip via Acumbamail","Cold lead: weekly newsletter enrollment","CRM update (SuiteDash/HubSpot)","Admin alert via Slack/email","Weekly performance report generation"]},
+
+  {id:"ai-support-bot",v:"AI Automation",name:"AI Customer Support Bot",price:3500,ret:500,desc:"Branded AI voice + chat agent handling FAQs, booking, tier-1 support with human escalation.",features:["Voice agent (Insighto)","Chat widget","Knowledge base (25 articles)","Appointment booking (Trafft)","Escalation routing","Call recording & analytics"],persona:"Law firms, e-commerce, SaaS startups",cs:"pacrop",timeline:"10 days",
+    emails:[{day:"Day 0",subj:"You're missing calls after 5pm",preview:"An AI voice agent picks up 24/7, books appointments, answers FAQs."},{day:"Day 3",subj:"What a $500/mo support bot actually handles",preview:"FAQs, appointment booking, tier-1 tickets, and smart escalation."},{day:"Day 7",subj:"Live demo: AI handling real customer calls",preview:"Watch how PA CROP's voice agent handles inbound inquiries."},{day:"Day 14",subj:"The cost of one missed call",preview:"Average missed call = $200-$500 in lost revenue. The bot costs $500/mo."}],
+    social:[{platform:"LinkedIn",content:"Every missed call costs your business $200-$500.\n\nI built an AI support bot that:\n→ Answers calls 24/7\n→ Handles top 25 FAQs\n→ Books appointments in real-time\n→ Escalates complex issues to humans\n\nSetup: $3,500. Monthly: $500.\nPays for itself after catching 3 missed calls.\n\nDM 'BOT' if you want one."},{platform:"Twitter/X",content:"Your customers don't want to leave voicemails.\n\nThey want answers NOW.\n\nI built an AI voice agent that handles inbound calls, books appointments, and answers FAQs — all without a human.\n\nCost: $500/mo\nReplaces: $3,000+/mo in after-hours staffing"}],
+    intake_fields:["Average monthly call volume","Top 10 customer questions","Current support channels","Appointment booking needs","Escalation contacts"],
+    n8n_steps:["Insighto voice agent configuration","Knowledge base import (25 articles)","Trafft booking integration","Escalation rules engine","Call recording → transcription","Daily summary report","Monthly analytics dashboard","Chat widget deployment"]},
+
+  {id:"ai-booking",v:"AI Automation",name:"Appointment Booking & Follow-Up",price:2500,ret:400,desc:"Trafft booking + automated confirmations, reminders, no-show follow-up, and review requests.",features:["Trafft configuration","SMS reminders (24hr, 1hr)","No-show follow-up sequence","Review request automation","Google Calendar sync","Payment collection"],persona:"Med spas, consultants, salons, tax preparers",cs:"pacrop",timeline:"1 week",
+    emails:[{day:"Day 0",subj:"No-shows are costing you $2K-$10K/month",preview:"Automated reminders at 24hr and 1hr reduce no-shows by 40%."},{day:"Day 3",subj:"The 3-step no-show recovery system",preview:"Reminder → rebook prompt → win-back offer. All automated."},{day:"Day 7",subj:"How to get 5-star reviews on autopilot",preview:"Send review requests 2 hours post-service when satisfaction peaks."},{day:"Day 14",subj:"Your scheduling is still manual?",preview:"$2,500 setup. Saves 5+ hours/week. Recovers $2K+/month in no-shows."}],
+    social:[{platform:"LinkedIn",content:"No-shows cost the average service business $2K-$10K per month.\n\nHere's the fix:\n1. SMS reminder 24 hours before\n2. SMS reminder 1 hour before\n3. No-show → automatic rebook prompt\n4. 2 hours post-service → review request\n\nI build this as a done-for-you system.\nSetup: $2,500. Monthly: $400.\nROI in the first week."},{platform:"Twitter/X",content:"The easiest revenue you'll ever recover:\n\nAutomate your appointment reminders.\n\n24hr SMS → 1hr SMS → no-show follow-up → review request.\n\nReduces no-shows by 40%.\nGenerates 5-star reviews on autopilot.\n\n$2,500 to set up. $400/mo to run."}],
+    intake_fields:["Services offered with durations","Staff members and availability","Current booking method","No-show rate estimate","Payment collection needs"],
+    n8n_steps:["Trafft service/staff configuration","Google Calendar bidirectional sync","24hr SMS reminder (SMS-iT)","1hr SMS reminder","No-show detection + rebook sequence","Post-service review request (2hr delay)","Weekly booking analytics report","Payment reminder for unpaid bookings"]},
+
+  {id:"ai-content-pipeline",v:"AI Automation",name:"AI Content Pipeline",price:3000,ret:1200,desc:"End-to-end: keyword research → blog → social → email, fully automated. 8 blogs, 24 social, 4 newsletters/month.",features:["8 blog posts/month","24 social posts/month","4 email newsletters","SEO optimization","WordPress auto-publish","Performance tracking"],persona:"B2B SaaS, local businesses, professional services",cs:"seomachine",timeline:"2 weeks",
+    emails:[{day:"Day 0",subj:"Your content marketing is either manual or nonexistent",preview:"I built a pipeline that produces 8 blogs, 24 social posts, 4 newsletters — automatically."},{day:"Day 3",subj:"Stop paying agencies $5K/month for content",preview:"My automated pipeline costs $1,200/mo and never misses a deadline."},{day:"Day 7",subj:"How the Dynasty SEO Machine works",preview:"WriterZen research → AI generation → WordPress publish → social repurpose → email."},{day:"Day 14",subj:"Content compound interest",preview:"Month 1: 8 articles. Month 6: 48 articles. Month 12: 96 ranking pages. All automated."}],
+    social:[{platform:"LinkedIn",content:"Stop paying $5K/month for content marketing agencies.\n\nI built an AI content pipeline that runs itself:\n\n1. Keyword research (WriterZen)\n2. Long-form blog generation\n3. Auto-publish to WordPress\n4. Repurpose → 3 social posts per article\n5. Monthly newsletter from top content\n\n8 blogs + 24 social posts + 4 newsletters/month.\nSetup: $3,000. Monthly: $1,200.\n\nThe content never stops."},{platform:"Twitter/X",content:"Content marketing math:\n\nAgency: $5K/mo for maybe 4 blog posts\nMy pipeline: $1,200/mo for 8 blogs + 24 social + 4 newsletters\n\nAll automated. All SEO-optimized. All published without touching a keyboard."}],
+    intake_fields:["WordPress site URL and credentials","Target keywords/topics","Brand voice guidelines","Competitor URLs","Email list platform"],
+    n8n_steps:["WriterZen keyword research trigger","AI content generation (topic → outline → draft)","SEO optimization pass","WordPress REST API publish","Social media repurposing (3 per article)","Acumbamail newsletter compilation","Performance tracking (GA4 integration)","Monthly content report"]},
+
+  {id:"ai-ops-suite",v:"AI Automation",name:"Business Operations Suite",price:5500,ret:800,desc:"Full SuiteDash workspace: client portal, onboarding, invoicing, engagement scoring, renewals.",features:["Client portal","Automated onboarding","Invoice generation","Engagement scoring","Renewal reminders","Document generation"],persona:"Agencies, coaching businesses, franchises",cs:"pacrop",timeline:"3 weeks",
+    emails:[{day:"Day 0",subj:"You're using 6+ tools to run your business",preview:"I replace them all with one integrated system."},{day:"Day 3",subj:"The 5 tools you can kill with SuiteDash",preview:"CRM + project management + invoicing + portal + email — one platform."},{day:"Day 7",subj:"How PA CROP runs on autopilot",preview:"Onboarding, invoicing, document generation, engagement scoring — all automated."},{day:"Day 14",subj:"Your competitors have systems. Do you?",preview:"$5,500 setup replaces $2K+/mo in scattered SaaS subscriptions."}],
+    social:[{platform:"LinkedIn",content:"The average agency uses 8 different tools:\n\n• CRM ($99/mo)\n• Project management ($49/mo)\n• Invoicing ($29/mo)\n• Client portal ($79/mo)\n• Document generation ($39/mo)\n• Email marketing ($49/mo)\n• Scheduling ($29/mo)\n• Engagement tracking (manual)\n\nTotal: $373/mo + hours of manual work.\n\nI replace ALL of this with one SuiteDash system for $800/mo — and it's automated.\n\nDM 'OPS' for details."},{platform:"Twitter/X",content:"I replaced 8 SaaS tools with one system:\n\nCRM + portal + invoicing + docs + onboarding + engagement scoring + renewals + email\n\nAll in SuiteDash + n8n automation.\n\nSetup: $5,500\nMonthly: $800\nReplaces: $373/mo + 10 hrs/week manual work"}],
+    intake_fields:["Current tools/software list","Number of active clients","Onboarding process description","Invoicing frequency","Document templates needed"],
+    n8n_steps:["SuiteDash workspace configuration","Client onboarding workflow (6 steps)","Automated invoice generation (Documentero)","Engagement scoring algorithm","Renewal reminder sequence (30/14/7 days)","Document generation triggers","Portal user provisioning","Monthly ops dashboard"]},
+
+  {id:"ai-phone",v:"AI Automation",name:"AI Phone System",price:4000,ret:600,desc:"Business phone with AI voice agent, outbound automation, recording, missed-call text-back.",features:["CallScaler number(s)","AI inbound handling","Outbound call automation","Call recording & transcription","Missed call → SMS","Analytics dashboard"],persona:"Home services, medical offices, dealerships",cs:"pacrop",timeline:"2 weeks",
+    emails:[{day:"Day 0",subj:"Every missed call is a lost customer",preview:"AI answers in 2 rings, books the appointment, texts the confirmation."},{day:"Day 3",subj:"Your phone system is from 2010",preview:"Modern businesses need AI-powered call handling, not voicemail."},{day:"Day 7",subj:"Live system: (814) 228-2822",preview:"Call this number and talk to an AI voice agent I built. It's live now."},{day:"Day 14",subj:"$600/mo vs hiring a receptionist",preview:"The AI handles unlimited calls. A receptionist handles 40/day max."}],
+    social:[{platform:"LinkedIn",content:"I replaced a receptionist with an AI phone system.\n\nCost: $600/mo\nCapacity: Unlimited simultaneous calls\nHours: 24/7/365\nMissed calls: Zero\n\nIt books appointments, answers FAQs, and texts confirmations.\n\nCall (814) 228-2822 to talk to the live system.\n\nDM 'PHONE' if you want one for your business."},{platform:"Twitter/X",content:"Your business phone system should:\n\n✓ Answer in 2 rings (AI)\n✓ Handle FAQs automatically\n✓ Book appointments in real-time\n✓ Text-back missed calls instantly\n✓ Record and transcribe every call\n✓ Run 24/7 for $600/mo\n\nI build these. DM me."}],
+    intake_fields:["Current phone system/provider","Average daily call volume","Common caller questions (top 10)","Appointment booking needs","After-hours requirements"],
+    n8n_steps:["CallScaler number provisioning","Insighto voice agent training","Inbound call routing rules","Missed call → SMS text-back","Outbound call scheduling (Thoughtly)","Call recording → transcription pipeline","Daily/weekly call analytics","Integration with CRM/calendar"]},
+
+  {id:"ai-audit",v:"AI Automation",name:"AI Workflow Audit",price:7500,ret:0,desc:"2-week deep dive: audit tech stack, identify automation opportunities, build top 3 workflows.",features:["Tech stack audit","ROI opportunity analysis","3 production workflows","Stack rationalization report","Architecture diagram","Implementation roadmap"],persona:"Businesses spending $2K–$10K/mo on SaaS",cs:"pacrop",timeline:"2 weeks",
+    emails:[{day:"Day 0",subj:"You're spending $2K+/month on tools that overlap",preview:"I audit your stack and build the 3 highest-ROI automations in 2 weeks."},{day:"Day 3",subj:"The 5 most common tool stack wastes I find",preview:"Duplicate CRMs, unused features, manual bridges between tools."},{day:"Day 7",subj:"$7,500 audit that typically saves $2K+/month",preview:"ROI in under 4 months. Plus 3 production-ready automations."},{day:"Day 14",subj:"Your competitors are automating. Are you?",preview:"The audit identifies 5-10 automation opportunities. I build the top 3."}],
+    social:[{platform:"LinkedIn",content:"I charge $7,500 for a 2-week workflow audit.\n\nHere's why clients say it's their best investment:\n\n→ I identify 5-10 automation opportunities\n→ I build the top 3 highest-ROI workflows\n→ I rationalize their tech stack (kill redundant tools)\n→ I deliver an architecture diagram and implementation roadmap\n\nTypical result: $2K+/month in savings + 10+ hours/week recovered.\n\nROI in under 4 months. Then it compounds.\n\nDM 'AUDIT' to start."},{platform:"Twitter/X",content:"The $7,500 audit:\n\n2 weeks. Full tech stack analysis.\n\nDeliverables:\n- 5-10 automation opportunities identified\n- Top 3 built and deployed\n- Tool redundancy report\n- Architecture diagram\n- Implementation roadmap\n\nTypical savings: $2K+/month + 10 hrs/week"}],
+    intake_fields:["Complete list of current tools/subscriptions","Monthly SaaS spend estimate","Biggest time-wasting manual processes","Team size and roles","Integration pain points"],
+    n8n_steps:["Tool stack inventory and cost analysis","Workflow mapping (current state)","Opportunity identification (5-10)","ROI scoring for each opportunity","Build top 3 workflows in n8n","Testing and deployment","Rationalization report generation","Handoff and training"]},
+
+  {id:"web-gov-saas",v:"Web Development",name:"Gov & Compliance SaaS Platform",price:20000,ret:1500,desc:"White-labeled gov SaaS: Next.js 14, Vercel, Clerk auth, Neon Postgres, Stripe, multi-tenant.",features:["Next.js 14 App Router","Clerk authentication","Neon Postgres + Drizzle","Stripe subscriptions","Multi-tenant architecture","Admin + user dashboards"],persona:"GovTech entrepreneurs, municipal consultants",cs:"leados",timeline:"6-8 weeks",
+    emails:[{day:"Day 0",subj:"Government agencies are stuck on paper",preview:"I built a SaaS platform that digitizes permits, licensing, and compliance."},{day:"Day 3",subj:"The GovTech SaaS architecture",preview:"Next.js 14 + Clerk + Neon + Stripe + Inngest. Multi-tenant. Production-ready."},{day:"Day 7",subj:"LeadOS-Gov: 9 phases from concept to launch",preview:"The build spec is done. The architecture is proven. Your vertical is next."},{day:"Day 14",subj:"$20K to own a gov SaaS platform",preview:"White-labeled, multi-tenant, Stripe billing. Your brand. Your revenue."}],
+    social:[{platform:"LinkedIn",content:"Government agencies are running on spreadsheets and paper forms in 2026.\n\nI built LeadOS-Gov — a multi-tenant SaaS platform for government operations:\n\n→ Clerk SSO authentication\n→ Stripe subscription billing\n→ Neon Postgres with Drizzle ORM\n→ Inngest background jobs\n→ shadcn/ui components\n→ Vercel edge deployment\n\nI white-label this for $15K-$25K.\n\nIf you have a government contract but no platform — DM me."},{platform:"Twitter/X",content:"Built a government SaaS platform in 9 phases.\n\nArchitecture:\n- Next.js 14 App Router\n- Clerk auth (SSO, RBAC)\n- Neon Postgres + Drizzle\n- Stripe billing\n- Inngest background jobs\n- Multi-tenant\n\nNow I white-label it for GovTech founders.\n$20K setup. $1,500/mo."}],
+    intake_fields:["Government vertical (permits, licensing, inspections, etc.)","Target agency size","Existing contracts or relationships","Required compliance standards","User roles and access levels"],
+    n8n_steps:["Vercel project creation","Clerk application setup","Neon database provisioning","Stripe product/price configuration","Inngest event registration","Domain configuration","Monitoring and alerting setup","Deployment pipeline verification"]},
+
+  {id:"web-pro-site",v:"Web Development",name:"Professional Services Website",price:3000,ret:0,desc:"Dynasty Developer theme with niche preset, copywriting, booking, SEO, Google Business setup.",features:["Dynasty Developer theme","5-10 pages copywriting","Trafft booking integration","Full SEO setup","Google Business optimization","90-day content calendar"],persona:"Attorneys, CPAs, medical practices, agents",cs:"dynasty-dev",timeline:"1-2 weeks",
+    emails:[{day:"Day 0",subj:"Your website is your first impression",preview:"Most professional services sites look like they were built in 2015."},{day:"Day 3",subj:"What a $3K website should include",preview:"Custom design, booking, SEO, copy, and a 90-day content calendar."},{day:"Day 7",subj:"Your competitors updated their site. Have you?",preview:"I checked — and I can close the gap in under 2 weeks."},{day:"Day 14",subj:"Last call: 2 spots left this month",preview:"$3,000 flat. Live in 2 weeks. Includes everything."}],
+    social:[{platform:"LinkedIn",content:"What a $3,000 website should actually include:\n\n→ Custom design (not a $50 template)\n→ 5-10 pages of professional copy\n→ Built-in appointment booking\n→ Full SEO setup (keywords, schema, sitemap)\n→ Google Business Profile optimization\n→ 90-day content calendar\n→ Mobile responsive + WCAG AA\n\nThat's my standard package for professional services.\n2-week delivery. Fixed price."},{platform:"Twitter/X",content:"Stop paying $5K for a website that's just a template with your logo.\n\nMy $3K package:\n✓ Custom design\n✓ Professional copywriting\n✓ Booking system\n✓ Full SEO\n✓ Content calendar\n\nLive in 2 weeks."}],
+    intake_fields:["Current website URL","Services offered","Target clients/patients","Competitor websites","Brand guidelines/colors/logo"],
+    n8n_steps:["WordPress installation (20i)","Dynasty Developer theme deployment","Content import and formatting","Trafft booking configuration","SEO setup (meta, schema, sitemap)","Google Business Profile claim/optimize","SSL and performance optimization","Analytics setup (GA4)"]},
+
+  {id:"web-authority",v:"Web Development",name:"Authority Niche Site",price:3500,ret:800,desc:"Monetizable content site: programmatic SEO, 30-50 AI articles, ad placement, affiliate infrastructure.",features:["Vercel deployment","30-50 initial articles","Programmatic SEO structure","Ad placement optimization","Affiliate link infrastructure","Analytics dashboard"],persona:"Side hustlers, agencies, niche experts",cs:"dynasty-authority",timeline:"2 weeks",
+    emails:[{day:"Day 0",subj:"Passive income sites that actually work",preview:"30-50 articles, programmatic SEO, ad-ready. Live in 2 weeks."},{day:"Day 3",subj:"The math on authority sites",preview:"50 articles × 500 visits/month × $20 RPM = $500/month passive."},{day:"Day 7",subj:"How I build authority sites at scale",preview:"Dynasty Authority Framework: Vercel + AI content + programmatic SEO."},{day:"Day 14",subj:"Your niche is waiting",preview:"$3,500 setup. Optional $800/mo content retainer. Revenue compounds monthly."}],
+    social:[{platform:"LinkedIn",content:"I built an authority site framework that generates passive income.\n\nThe model:\n1. Pick a niche (Blue Ocean Framework)\n2. Deploy on Vercel (fast, free hosting)\n3. Generate 30-50 SEO articles (AI-powered)\n4. Set up programmatic pages\n5. Add ad placements + affiliate links\n6. Let it compound\n\nMonth 6: ~$500/mo\nMonth 12: ~$2,000/mo\nMonth 24: ~$5,000/mo\n\nSetup: $3,500\nContent retainer: $800/mo (optional)\n\nDM 'AUTHORITY' to pick your niche."},{platform:"Twitter/X",content:"Authority site economics:\n\n$3,500 setup + $800/mo content\n\nMonth 3: 50 articles indexed\nMonth 6: 500 visits/day\nMonth 12: Mediavine approved\nMonth 18: $3K/mo passive\n\nThat's a 36x annual return on the setup cost."}],
+    intake_fields:["Niche/topic area of interest","Existing domain (if any)","Content expertise level","Monetization preference (ads vs affiliate vs both)","Competitor authority sites"],
+    n8n_steps:["Niche validation (Blue Ocean Framework)","Domain configuration","Vercel project deployment","Initial 30-50 article generation","Programmatic SEO page creation","Ad placement setup (AdSense/Mediavine)","Affiliate link infrastructure","Monthly content generation workflow"]},
+
+  {id:"web-portal",v:"Web Development",name:"Client Portal & Dashboard",price:10000,ret:800,desc:"Custom portal: login, invoices, requests, documents, team communication, admin reporting.",features:["Clerk authentication","Invoice & payment tracking","Request/ticket system","Document management","Admin analytics dashboard","Team communication"],persona:"Agencies, property managers, MSPs",cs:"pacrop",timeline:"4-5 weeks",
+    emails:[{day:"Day 0",subj:"Your clients deserve a portal",preview:"Invoices, documents, requests — all in one branded login."},{day:"Day 3",subj:"What a client portal eliminates",preview:"Email chains, lost documents, payment follow-ups, status update calls."},{day:"Day 7",subj:"PA CROP's portal: 2,112 lines of production code",preview:"Built with Next.js + Clerk + Neon. 146 API endpoints. Live and serving clients."},{day:"Day 14",subj:"$10K for a portal that runs your business",preview:"Custom built. Your brand. Your workflows. Not a SaaS you rent."}],
+    social:[{platform:"LinkedIn",content:"Your clients email you for invoices.\nThey call for status updates.\nThey lose documents you sent 3 times.\n\nA client portal fixes all of this:\n\n→ Login → see invoices → pay online\n→ Submit requests → track status\n→ Access all documents in one place\n→ Message your team directly\n\nI built PA CROP's portal: 2,112 lines, 146 API endpoints.\nNow I build them for $10K + $800/mo.\n\nDM 'PORTAL' for details."},{platform:"Twitter/X",content:"Built a client portal with:\n\n- Clerk auth (SSO, magic links)\n- Invoice tracking + Stripe payments\n- Document management\n- Request/ticket system\n- Admin analytics dashboard\n\n2,112 lines. 146 API endpoints.\nLive in production.\n\nI build these for $10K."}],
+    intake_fields:["Number of active clients","Features needed (invoicing, documents, requests, etc.)","Current client communication method","Branding requirements","Integration needs (accounting, CRM, etc.)"],
+    n8n_steps:["Clerk application + user provisioning","Neon database schema creation","API endpoint development","Invoice system + Stripe integration","Document upload/management system","Request/ticket workflow","Admin dashboard development","User onboarding flow"]},
+
+  {id:"web-landing",v:"Web Development",name:"Landing Page Conversion System",price:2000,ret:0,desc:"High-converting page with A/B testing, lead capture, retargeting pixels, email sequence.",features:["Conversion-optimized design","Lead capture → CRM","Retargeting pixel setup","Email welcome sequence","A/B testing framework","Analytics tracking"],persona:"Anyone running paid ads, course creators",cs:"dynasty-landing",timeline:"3-5 days",
+    emails:[{day:"Day 0",subj:"Your ads are sending traffic to a bad page",preview:"A proper landing page doubles your conversion rate. I build them in 3-5 days."},{day:"Day 3",subj:"Anatomy of a high-converting landing page",preview:"Hero → social proof → benefits → objection handling → CTA. Science, not art."},{day:"Day 7",subj:"Your $5K/mo ad spend deserves a $2K landing page",preview:"Double your conversion rate. Halve your cost per acquisition."},{day:"Day 14",subj:"2 spots left this week",preview:"$2,000. Live in 3-5 days. Includes retargeting pixels + email sequence."}],
+    social:[{platform:"LinkedIn",content:"You're spending $5K/month on ads sending traffic to your homepage.\n\nThat's like hiring a salesperson and having them hand out blank business cards.\n\nA dedicated landing page:\n→ 2-3x higher conversion rate\n→ Captures leads into your CRM\n→ Triggers automated email sequences\n→ Retargets visitors who didn't convert\n\nI build these in 3-5 days for $2,000.\nThe ROI shows up in your next ad cycle."},{platform:"Twitter/X",content:"Landing page math:\n\nBefore: 2% conversion, $50 CPL\nAfter: 5% conversion, $20 CPL\n\nSame ad spend. 2.5x more leads.\n\nI build conversion-optimized landing pages in 3-5 days.\n$2,000 flat. Includes email sequence + retargeting."}],
+    intake_fields:["Current ad platforms (Google, Meta, LinkedIn)","Monthly ad spend","Target audience","Current conversion rate (if known)","Offer/product being promoted"],
+    n8n_steps:["Landing page design + development","Lead capture form → CRM webhook","Meta/Google pixel installation","Email welcome sequence (Acumbamail)","A/B test variant creation","Thank-you page + upsell flow","Analytics dashboard setup","Weekly conversion report"]},
+
+  {id:"web-saas-mvp",v:"Web Development",name:"Full-Stack SaaS MVP",price:14000,ret:1000,desc:"Production SaaS: Next.js 14, auth, database, Stripe billing, admin dashboard, onboarding.",features:["Next.js 14 + Vercel","Authentication (SSO, magic links)","Postgres + Drizzle ORM","Stripe subscriptions","User onboarding flow","Admin dashboard"],persona:"Non-technical founders, enterprise spinouts",cs:"leados",timeline:"4-6 weeks",
+    emails:[{day:"Day 0",subj:"Your SaaS idea is stuck in a slide deck",preview:"I build production MVPs in 4-6 weeks. Not prototypes — real products."},{day:"Day 3",subj:"What $14K buys you in SaaS development",preview:"Auth, database, Stripe billing, admin dashboard, onboarding. Production-grade."},{day:"Day 7",subj:"Case study: LeadOS-Gov architecture",preview:"Next.js 14, Clerk, Neon, Stripe, Inngest. Multi-tenant. 9-phase build."},{day:"Day 14",subj:"Your competitors are shipping. Are you?",preview:"4-6 weeks from kickoff to live product. Fixed price. No surprises."}],
+    social:[{platform:"LinkedIn",content:"Most 'MVP' agencies deliver a prototype that breaks in production.\n\nI deliver a production-grade SaaS:\n\n→ Next.js 14 (server-side rendering)\n→ Clerk authentication (SSO, magic links)\n→ Neon Postgres + Drizzle ORM\n→ Stripe subscription billing\n→ Admin dashboard\n→ User onboarding flow\n→ CI/CD on Vercel\n\n$14,000. 4-6 weeks. Ships to production.\n\nI've built 3 of these (PA CROP, LeadOS-Gov, Dynasty Launcher). Your idea is next.\n\nDM 'MVP' to start."},{platform:"Twitter/X",content:"SaaS MVP in 4-6 weeks:\n\n- Next.js 14\n- Clerk auth\n- Neon Postgres\n- Stripe billing\n- Admin dashboard\n- Onboarding flow\n\n$14,000 flat.\nNot a prototype. A product.\n\nI've shipped 3. Your idea is #4."}],
+    intake_fields:["Product description (1-2 paragraphs)","Target users/customers","Core features (top 5)","Revenue model (subscription tiers)","Competitive landscape","Existing wireframes or specs (if any)"],
+    n8n_steps:["Requirements workshop + spec finalization","Vercel + Neon + Clerk provisioning","Database schema design + migration","Core feature development (2-3 weeks)","Stripe billing integration","Admin dashboard build","User onboarding flow","QA, deployment, monitoring setup"]},
+
+  {id:"dir-turnkey",v:"Directories",name:"Turnkey Niche Directory",price:5000,ret:500,desc:"Fully configured BD site: theme, 3 tiers, Stripe, SEO pages, 50-100 seed listings.",features:["BD theme customization","3 membership tiers","Stripe billing","50-100 seed listings","Programmatic SEO pages","Lead matching system"],persona:"Entrepreneurs, associations, agencies",cs:"immigrationsmarts",timeline:"2 weeks",
+    emails:[{day:"Day 0",subj:"Own the directory for your industry",preview:"Recurring revenue. Hands-off. Live in 2 weeks."},{day:"Day 3",subj:"Directory business math: 75 members × $79/mo = $5,925/mo",preview:"That's $71K/year from one directory."},{day:"Day 7",subj:"ImmigrationSmarts: 123 categories, 3 tiers, live",preview:"Case study of a directory I built and launched."},{day:"Day 14",subj:"5 niches that need a directory right now",preview:"I've validated 100+ niches. Yours could be next."}],
+    social:[{platform:"LinkedIn",content:"Directory businesses are the most underrated recurring revenue model.\n\nThe math:\n→ 50 members × $49/mo = $2,450/mo\n→ 20 members × $99/mo = $1,980/mo\n→ 5 members × $199/mo = $995/mo\n→ Total: $5,425/mo recurring\n\nThat's $65K/year from ONE directory.\n\nI build these turnkey for $5,000.\n→ Brilliant Directories platform\n→ 3 membership tiers + Stripe\n→ 50-100 seed listings\n→ Programmatic SEO pages\n→ Live in 2 weeks\n\nDM 'DIRECTORY' to pick your niche."},{platform:"Twitter/X",content:"The directory business model:\n\n$5K to launch\n$500/mo to manage\n$65K/year recurring at 75 members\n\n13x return in year one.\n\nI've built the infrastructure. Pick your niche."}],
+    intake_fields:["Target niche/industry","Geographic focus (local, national, international)","Similar directories (competitors)","Target member profile","Monetization model preference"],
+    n8n_steps:["Brilliant Directories instance provisioning","Theme customization + branding","Membership tier configuration","Stripe product/price setup","Seed listing import (50-100)","Programmatic SEO page generation","Lead matching rule configuration","Launch email to seed listings"]},
+
+  {id:"dir-suite",v:"Directories",name:"Directory + SuiteDash Bundle",price:8500,ret:1000,desc:"Directory + full SuiteDash backend: onboarding, invoicing, docs, engagement scoring, portal.",features:["Everything in Turnkey","SuiteDash backend","Automated onboarding","Document generation","Engagement scoring","Renewal workflows"],persona:"Hands-off operators, B2B marketplaces",cs:"pacrop",timeline:"3 weeks",
+    emails:[{day:"Day 0",subj:"A directory business that runs itself",preview:"Front-end generates members. Back-end handles everything else."},{day:"Day 3",subj:"Directory + operations = hands-off business",preview:"SuiteDash automates onboarding, invoicing, renewals, and engagement scoring."},{day:"Day 7",subj:"The PA CROP model applied to directories",preview:"BD front-end + SuiteDash backend + n8n automation. Fully integrated."},{day:"Day 14",subj:"$8,500 for a hands-off recurring revenue business",preview:"Directory + operations + automation. Live in 3 weeks."}],
+    social:[{platform:"LinkedIn",content:"I don't just build directories. I build directory BUSINESSES.\n\nFront-end: Brilliant Directories (members find and join)\nBack-end: SuiteDash (operations run automatically)\nGlue: n8n (connects everything)\n\nThe result:\n→ Members sign up and get auto-onboarded\n→ Invoices generate automatically\n→ Engagement scoring flags at-risk members\n→ Renewal reminders fire at 30/14/7 days\n→ You check a dashboard once a week\n\n$8,500 setup. $1,000/mo management.\nHands-off recurring revenue."},{platform:"Twitter/X",content:"Directory business stack:\n\nFront: Brilliant Directories\nBack: SuiteDash\nGlue: n8n automation\n\nMembers self-serve. Operations auto-run.\nYou check a dashboard weekly.\n\n$8,500 setup. $1,000/mo."}],
+    intake_fields:["All Turnkey Directory fields","Operations automation needs","Document templates required","Engagement metrics to track","Renewal/churn prevention strategy"],
+    n8n_steps:["All Turnkey Directory steps","SuiteDash workspace configuration","Member onboarding automation","Invoice/payment automation","Engagement scoring algorithm","Renewal reminder sequence","Churn prevention workflow","Operations dashboard setup"]},
+
+  {id:"dir-portfolio",v:"Directories",name:"Directory Portfolio (3-Pack)",price:12000,ret:1500,desc:"Three related-niche directories with shared backend, centralized billing, cross-promo network.",features:["3 validated niches","Shared SuiteDash backend","Centralized billing","Cross-directory promos","Single admin dashboard","Portfolio analytics"],persona:"Serial entrepreneurs, holding companies",cs:"dynasty-portfolio",timeline:"5-6 weeks",
+    emails:[{day:"Day 0",subj:"Why one directory when you can own three?",preview:"Diversified recurring revenue. Shared infrastructure. Portfolio economics."},{day:"Day 3",subj:"The portfolio advantage",preview:"3 directories × $5,425/mo = $16,275/mo. Shared backend = lower costs."},{day:"Day 7",subj:"How I'm building a 100-directory portfolio",preview:"The Blue Ocean Hungry Market Framework for niche selection."},{day:"Day 14",subj:"$12K for a 3-directory portfolio",preview:"That's $4K per directory. Break even in under 3 months."}],
+    social:[{platform:"LinkedIn",content:"I'm building a portfolio of 100 niche directories.\n\nThe framework:\n1. Blue Ocean Hungry Market analysis\n2. Brilliant Directories deployment\n3. SuiteDash operations backend\n4. n8n automation glue\n5. Cross-directory promotion network\n\nEach directory costs ~$4K to launch.\nEach generates $5K+/mo at scale.\n\nI'm selling 3-packs for $12,000.\nShared backend. Centralized billing. Portfolio analytics.\n\nDM 'PORTFOLIO' if you want to own a directory empire."},{platform:"Twitter/X",content:"Directory portfolio math:\n\n3 directories × $5,425/mo = $16,275/mo\n$195K/year recurring\n\nSetup: $12,000 (3-pack)\nBreak even: ~3 months\nROI: 16x annually\n\nShared backend. One dashboard.\nI build these."}],
+    intake_fields:["3 niche ideas or industries of interest","Geographic focus","Investment timeline","Management preference (self vs managed)","Revenue goals"],
+    n8n_steps:["Niche validation × 3 (Blue Ocean Framework)","Shared SuiteDash workspace setup","BD instance × 3 provisioning","Centralized Stripe configuration","Cross-directory link network","Unified admin dashboard","Portfolio analytics pipeline","Launch sequence for all 3"]},
+
+  {id:"ugc-youtube",v:"Content Production",name:"Faceless YouTube Channel",price:3000,ret:1500,desc:"Complete faceless channel: niche research, branding, 10 videos, SEO, thumbnails, 90-day calendar.",features:["Niche & competitor research","Channel branding package","10 produced videos","SEO-optimized metadata","Thumbnail templates","90-day content calendar"],persona:"Side hustlers, experts, agencies",cs:"dynasty-video",timeline:"3 weeks",
+    emails:[{day:"Day 0",subj:"YouTube ad revenue without showing your face",preview:"Faceless channels earning $2K-$10K/mo. I build yours in 3 weeks."},{day:"Day 3",subj:"The faceless YouTube formula",preview:"Niche research → scripting → AI production → SEO optimization → publish."},{day:"Day 7",subj:"75+ video production tools. Zero camera required.",preview:"My arsenal handles research, scripting, production, editing, and publishing."},{day:"Day 14",subj:"Your first 10 videos are waiting",preview:"$3,000 setup. $1,500/mo ongoing. Revenue starts when monetization kicks in."}],
+    social:[{platform:"LinkedIn",content:"Faceless YouTube channels are printing money in 2026.\n\nThe model:\n→ AI-researched niche (Subscribr)\n→ AI-scripted content\n→ AI-produced videos (Vadoo AI + Fliki)\n→ SEO-optimized (Taja)\n→ Published on schedule\n\nNo camera. No editing skills. No face on screen.\n\nI launch your channel with 10 videos for $3,000.\nOngoing production: $1,500/mo (8 videos).\n\nDM 'YOUTUBE' to pick your niche."},{platform:"Twitter/X",content:"Built a faceless YouTube channel launch system:\n\n$3,000 gets you:\n- Niche research\n- Channel branding\n- 10 produced videos\n- SEO optimization\n- Thumbnail templates\n- 90-day calendar\n\nNo camera. No editing. No face.\n\n$1,500/mo for ongoing production."}],
+    intake_fields:["Niche/topic interest","Target audience","Existing YouTube presence (if any)","Monetization goals","Content style preferences"],
+    n8n_steps:["Niche validation (Subscribr research)","Channel branding design","Video script generation pipeline","AI video production (Vadoo/Fliki)","SEO optimization (Taja)","Thumbnail generation pipeline","Publishing schedule automation","Analytics tracking setup"]},
+
+  {id:"ugc-brand",v:"Content Production",name:"UGC Brand Content Package",price:2000,ret:2000,desc:"10 short-form UGC videos/month for TikTok, Reels, Shorts, and paid ads.",features:["10 videos/month","Hook-first scripting","Platform-specific formats","Caption overlays","Ad-ready deliverables","Performance tracking"],persona:"DTC brands, SaaS, Amazon sellers",cs:"dynasty-content",timeline:"Ongoing monthly",
+    emails:[{day:"Day 0",subj:"Your ads need UGC content",preview:"Brand-produced ads convert 50% less than UGC-style content."},{day:"Day 3",subj:"10 videos/month for $2K",preview:"That's $200/video. Scripted, produced, captioned, platform-optimized."},{day:"Day 7",subj:"UGC is the #1 ad format in 2026",preview:"Authentic content > polished ads. I produce both."},{day:"Day 14",subj:"Your competitors are flooding feeds with UGC",preview:"10 videos/month keeps you in the conversation. Let's start."}],
+    social:[{platform:"LinkedIn",content:"UGC-style content outperforms brand-produced ads by 50%+.\n\nMy UGC package:\n→ 10 short-form videos/month\n→ Hook-first scripting\n→ TikTok, Reels, Shorts formats\n→ Caption overlays\n→ Ad-ready deliverables\n\n$2,000/month. $200/video.\n\nDM 'UGC' for samples."},{platform:"Twitter/X",content:"Brand ads: 1-2% CTR\nUGC content: 3-5% CTR\n\nThe data is clear.\n\n10 UGC videos/month for $2,000.\nScripted. Produced. Platform-optimized.\n\nDM me."}],
+    intake_fields:["Product/service to promote","Target platforms","Brand guidelines","Previous ad performance data","Competitor examples you like"],
+    n8n_steps:["Content brief creation","Script generation (hook-first)","Video production pipeline","Caption/subtitle generation","Platform-specific formatting","Delivery to client","Performance tracking setup","Monthly optimization report"]},
+
+  {id:"ugc-repurpose",v:"Content Production",name:"Content Repurposing Engine",price:800,ret:2500,desc:"1 long-form → 5 clips, 10 social posts, 1 blog, 1 newsletter, 1 thread, 1 LinkedIn article.",features:["5 short-form clips","10 social media posts","1 blog article","1 email newsletter","1 Twitter thread","1 LinkedIn article"],persona:"Podcasters, speakers, CEOs, course creators",cs:"dynasty-repurpose",timeline:"Per episode/monthly",
+    emails:[{day:"Day 0",subj:"One podcast episode = 19 pieces of content",preview:"I turn your long-form content into a month's worth of social, blogs, and email."},{day:"Day 3",subj:"The repurposing math",preview:"1 recording session → 5 clips + 10 posts + 1 blog + 1 newsletter + 2 articles."},{day:"Day 7",subj:"Your content is dying after one use",preview:"Record once. Distribute everywhere. Automatically."},{day:"Day 14",subj:"$800/episode or $2,500/month (4 episodes)",preview:"Your content library grows exponentially while you record once."}],
+    social:[{platform:"LinkedIn",content:"You recorded a podcast episode.\n\nNow what?\n\nMost people: post it and move on.\nSmart people: repurpose it into 19 pieces of content.\n\nMy repurposing engine turns 1 episode into:\n→ 5 short-form video clips\n→ 10 social media posts\n→ 1 blog article\n→ 1 email newsletter\n→ 1 Twitter thread\n→ 1 LinkedIn article\n\n$800/episode or $2,500/month (4 episodes).\n\nRecord once. Be everywhere."},{platform:"Twitter/X",content:"Content repurposing formula:\n\n1 podcast episode becomes:\n- 5 video clips\n- 10 social posts\n- 1 blog article\n- 1 newsletter\n- 1 Twitter thread\n- 1 LinkedIn article\n\n19 pieces from 1 recording.\n$800/episode. Automated."}],
+    intake_fields:["Content type (podcast, webinar, video, keynote)","Frequency of new content","Distribution platforms","Brand voice guidelines","Current content workflow"],
+    n8n_steps:["Castmagic transcription + analysis","Key quote extraction","Short-form clip identification + creation","Blog article generation","Social post creation (10 variants)","Newsletter compilation","Twitter thread formatting","LinkedIn article adaptation","Multi-platform publishing"]},
+
+  {id:"host-wp",v:"Hosting",name:"Managed WordPress Hosting",price:0,ret:149,desc:"WordPress on 20i Pinnacle: daily backups, SSL, CDN, updates, security scans, support hours.",features:["20i Pinnacle hosting","Daily backups + SSL","Core/plugin/theme updates","Monthly security scans","Support hours included","Uptime monitoring"],persona:"All WordPress clients, agencies",cs:"pacrop-hosting",timeline:"Same day",
+    emails:[{day:"Day 0",subj:"Your hosting is slow and insecure",preview:"GoDaddy/Bluehost = shared servers, slow speeds, poor security."},{day:"Day 3",subj:"What managed hosting actually means",preview:"I handle backups, updates, security, and performance. You focus on business."},{day:"Day 7",subj:"$149/mo for hosting that just works",preview:"20i Pinnacle infrastructure. Daily backups. Monthly security scans."},{day:"Day 14",subj:"Your site went down. Could you fix it?",preview:"With managed hosting, you don't have to. I handle everything."}],
+    social:[{platform:"LinkedIn",content:"Your WordPress site is probably on cheap shared hosting.\n\nHere's what that means:\n→ Shared server = slow speeds\n→ No automatic updates = security vulnerabilities\n→ No backups = one hack away from losing everything\n\nMy managed hosting: $149/mo\n→ 20i Pinnacle infrastructure\n→ Daily backups + SSL\n→ Automatic updates\n→ Monthly security scans\n→ Support when you need it\n\nDM 'HOSTING' to switch."},{platform:"Twitter/X",content:"WordPress hosting tiers:\n\nGoDaddy ($12/mo): Slow. Shared. Insecure.\nManaged ($149/mo): Fast. Backed up. Maintained.\n\nThe $137 difference pays for itself when you DON'T get hacked.\n\nI manage WordPress hosting on 20i Pinnacle."}],
+    intake_fields:["Current hosting provider","Website URL","Current monthly visitors","Known performance issues","WordPress version and plugins"],
+    n8n_steps:["20i package provisioning (API)","DNS migration","WordPress migration","SSL configuration","Backup schedule setup","Update schedule configuration","Monitoring + alerting setup","Client notification of completion"]},
+
+  {id:"host-app",v:"Hosting",name:"App Hosting (Vercel + 20i)",price:0,ret:149,desc:"Managed deployment: Vercel or 20i, custom domain, SSL, CI/CD, performance monitoring.",features:["Vercel or 20i deployment","Custom domain + SSL","GitHub CI/CD pipeline","Performance optimization","Uptime monitoring","Technical support"],persona:"SaaS startups, agencies, developers",cs:"dynasty-hosting",timeline:"Same day",
+    emails:[{day:"Day 0",subj:"Stop managing your own servers",preview:"Vercel + CI/CD + monitoring. $149/mo. I handle everything."},{day:"Day 3",subj:"Why Vercel for your app",preview:"Edge deployment, automatic SSL, GitHub integration, zero config."},{day:"Day 7",subj:"DevOps for $149/mo instead of $8K/mo",preview:"Skip hiring a DevOps engineer. I manage your deployment."},{day:"Day 14",subj:"Push to GitHub. It deploys. That's it.",preview:"CI/CD pipeline configured. Preview deployments. Production automation."}],
+    social:[{platform:"LinkedIn",content:"DevOps engineer: $8K+/mo\nManaged app hosting: $149/mo\n\nI handle:\n→ Vercel or 20i deployment\n→ Custom domain + SSL\n→ GitHub CI/CD pipeline\n→ Performance optimization\n→ Uptime monitoring\n\nYou push code. It deploys.\nI fix anything that breaks."},{platform:"Twitter/X",content:"Your startup doesn't need a DevOps engineer.\n\nIt needs managed hosting:\n\n✓ Vercel deployment\n✓ Custom domain + SSL\n✓ GitHub → auto-deploy\n✓ Performance monitoring\n✓ $149/mo\n\nI manage it."}],
+    intake_fields:["Application type (Next.js, React, static)","GitHub repository URL","Current hosting setup","Domain name","Performance requirements"],
+    n8n_steps:["Vercel/20i project creation","GitHub CI/CD configuration","Custom domain + DNS setup","SSL provisioning","Performance baseline measurement","Monitoring + alerting setup","Backup strategy implementation","Documentation delivery"]},
+
+  {id:"biz-llc",v:"Business Setup",name:"LLC Formation & Business-in-a-Box",price:2500,ret:0,desc:"LLC formation, EIN, operating agreement, bank setup, S-Corp analysis, bookkeeping system.",features:["LLC formation (any state)","EIN application","Operating agreement","S-Corp election analysis","Bookkeeping setup","Strategy call"],persona:"New entrepreneurs, side hustlers, RE investors",cs:"dynasty-entity",timeline:"1-2 weeks",
+    emails:[{day:"Day 0",subj:"Your side hustle needs an LLC",preview:"Legal protection + tax benefits. Formation to bookkeeping in 2 weeks."},{day:"Day 3",subj:"Wyoming LLC vs your state: the smart move",preview:"Asset protection + tax advantages + privacy. Here's the breakdown."},{day:"Day 7",subj:"S-Corp election saved me $15K+ in taxes",preview:"If you're earning $50K+ from your business, you need this analysis."},{day:"Day 14",subj:"$2,500 for a fully set up business",preview:"LLC + EIN + operating agreement + bookkeeping + S-Corp analysis."}],
+    social:[{platform:"LinkedIn",content:"If your side hustle earns $50K+/year, you're overpaying taxes.\n\nHere's the fix:\n1. Form an LLC ($2,500 — I handle everything)\n2. S-Corp election analysis (included)\n3. Proper operating agreement (included)\n4. Bookkeeping system setup (included)\n5. Strategy call on entity structure (included)\n\nThe S-Corp election alone typically saves $5K-$15K/year in self-employment taxes.\n\nDM 'LLC' to start."},{platform:"Twitter/X",content:"Side hustle tax savings:\n\nNo LLC: Pay 15.3% SE tax on everything\nWith LLC + S-Corp: Pay SE tax only on salary, save $5K-$15K/yr\n\nI handle the full setup: $2,500\n\nLLC + EIN + operating agreement + S-Corp analysis + bookkeeping"}],
+    intake_fields:["Business name preference","State of formation preference","Business description","Expected annual revenue","Current business structure (if any)"],
+    n8n_steps:["LLC formation filing","EIN application","Operating agreement generation","S-Corp analysis + recommendation","Bookkeeping system configuration","Bank account setup guidance","Compliance calendar creation","Welcome package delivery"]},
+
+  {id:"biz-entity",v:"Business Setup",name:"Multi-Entity Structuring",price:7500,ret:0,desc:"Holding company: parent LLC, operating entities, trust guidance, asset protection strategy.",features:["Holding company design","Operating LLC setup","Trust formation guidance","Inter-entity agreements","Compliance calendar","Entity map documentation"],persona:"Owners with 2+ entities, RE investors",cs:"dynasty-entity",timeline:"2-4 weeks",
+    emails:[{day:"Day 0",subj:"Your businesses need a holding company",preview:"Asset protection + tax efficiency + liability separation."},{day:"Day 3",subj:"The Dynasty Empire entity structure",preview:"Wyoming Trust → PNR Holdings → 6 operating LLCs. Here's why."},{day:"Day 7",subj:"Your properties are exposed without entity separation",preview:"One lawsuit = everything at risk. Proper structure prevents this."},{day:"Day 14",subj:"$7,500 for an entity structure that protects everything",preview:"Holding company + operating LLCs + trust guidance + compliance."}],
+    social:[{platform:"LinkedIn",content:"I run 6+ LLCs under a holding company structure.\n\nWhy:\n→ Asset protection (one LLC's liability stays contained)\n→ Tax efficiency (strategic income distribution)\n→ Estate planning (trust owns the holding company)\n→ Professional credibility (each business is a separate entity)\n\nThe structure:\nWyoming Dynasty Trust → PNR Holdings LLC → Operating LLCs\n\nI design these for $7,500.\nIncludes entity map, inter-entity agreements, and compliance calendar.\n\nDM 'ENTITY' for details."},{platform:"Twitter/X",content:"Business owner with 2+ LLCs?\n\nYou need a holding company.\n\nBenefits:\n- Asset protection\n- Tax efficiency\n- Liability containment\n- Estate planning\n\nI design multi-entity structures for $7,500.\n\nIncludes everything: formation, agreements, trust guidance, compliance."}],
+    intake_fields:["Current business entities","Assets to protect","Real estate holdings","Desired level of complexity","Estate planning goals"],
+    n8n_steps:["Entity structure analysis","Holding company formation","Operating LLC formation (as needed)","Trust formation guidance document","Inter-entity agreement drafting","Compliance calendar setup","Entity map creation","Annual review schedule setup"]},
+
+  {id:"biz-tax",v:"Business Setup",name:"Tax Strategy & Compliance",price:0,ret:250,desc:"S-Corp optimization, Augusta Rule, estimated tax automation, bookkeeping review, compliance alerts.",features:["S-Corp salary optimization","Augusta Rule documentation","Estimated tax reminders","Bookkeeping review","Annual compliance checklist","Strategy sessions"],persona:"Self-employed, RE investors, S-Corp owners",cs:"dynasty-tax",timeline:"Ongoing",
+    emails:[{day:"Day 0",subj:"You're paying too much in taxes",preview:"S-Corp salary optimization alone saves most clients $5K-$15K/year."},{day:"Day 3",subj:"5 tax strategies most business owners miss",preview:"S-Corp salary, Augusta Rule, cost segregation, estimated taxes, home office."},{day:"Day 7",subj:"Estimated tax deadline is approaching",preview:"Automated reminders mean you never miss a deadline again."},{day:"Day 14",subj:"$250/month for proactive tax strategy",preview:"Not tax preparation. Tax STRATEGY. The difference is $10K+/year."}],
+    social:[{platform:"LinkedIn",content:"5 tax strategies most business owners don't use:\n\n1. S-Corp salary optimization (save $5K-$15K/yr)\n2. Augusta Rule (rent your home to your business — tax free)\n3. Cost segregation (accelerate RE depreciation)\n4. Estimated tax automation (never miss a deadline)\n5. Home office deduction (calculated correctly)\n\nI provide ongoing tax strategy for $250/mo.\nNot tax prep. Tax STRATEGY.\n\nThe difference is $10,000+/year.\n\nDM 'TAX' to start."},{platform:"Twitter/X",content:"Tax prep: $500/year, looks backward\nTax strategy: $250/mo, looks forward\n\nThe strategy saves you $10K+/year.\n\nS-Corp salary, Augusta Rule, estimated taxes, cost segregation, compliance automation.\n\n$250/mo. The ROI is obvious."}],
+    intake_fields:["Current entity structure","Annual gross revenue","Current tax professional","Real estate holdings","Biggest tax concern"],
+    n8n_steps:["S-Corp salary analysis","Augusta Rule documentation setup","Estimated tax calendar automation","Bookkeeping system review","Compliance deadline tracking","Quarterly strategy session scheduling","Annual review preparation","Year-end optimization checklist"]},
+
+  {id:"biz-notary",v:"Business Setup",name:"Notary & Document Services",price:200,ret:0,desc:"Mobile notary, loan signing, RE closings, POA, estate planning docs. Erie, PA area.",features:["Mobile notary","Loan signing agent","Real estate closings","Power of attorney","Estate document notarization","Same-day availability"],persona:"Title companies, RE investors, individuals",cs:"pa-notary",timeline:"Same day",
+    emails:[{day:"Day 0",subj:"Mobile notary in Erie, PA — same day",preview:"Loan signings, RE closings, POA, estate docs. I come to you."},{day:"Day 3",subj:"Real estate closing this week?",preview:"Licensed notary + MLO. I handle the signing and the financing questions."},{day:"Day 7",subj:"Bulk notary services for title companies",preview:"Reliable, experienced, same-day availability. Volume discounts."},{day:"Day 14",subj:"Don't delay your closing for a notary",preview:"Same-day mobile service. $150-$300. Erie, PA and surrounding areas."}],
+    social:[{platform:"LinkedIn",content:"Mobile notary services in Erie, PA.\n\n→ Loan signings: $150-$300\n→ Real estate closings\n→ Power of attorney\n→ Estate planning documents\n→ General notarization: $75-$150\n\nSame-day availability. I come to you.\n\nPA Notary Public + MLO License + Real Estate License\n\nBook: [link]"},{platform:"Twitter/X",content:"Need a notary in Erie, PA?\n\nSame-day mobile service.\nLoan signings, RE closings, POA, estate docs.\n\n$75-$300 depending on service.\n\nPA Notary + MLO + RE License"}],
+    intake_fields:["Service needed","Document type","Date/time preference","Location","Number of signers"],
+    n8n_steps:["Booking confirmation (Trafft)","Pre-appointment document checklist email","Calendar sync","Post-signing document delivery","Invoice generation","Follow-up for future needs","Title company relationship tracking","Monthly revenue reporting"]},
+
+  {id:"ux-sprint",v:"UX Research",name:"UX Research Sprint (2-Week)",price:10000,ret:0,desc:"Focused: problem framing, 5-8 interviews, affinity mapping, insight synthesis, findings deck.",features:["Problem framing workshop","5-8 user interviews","Affinity mapping","Insight synthesis","Presentation-ready deck","Prioritized recommendations"],persona:"Startups (A-C), enterprise product teams",cs:"aws-ux",timeline:"2 weeks",
+    emails:[{day:"Day 0",subj:"You're building features nobody asked for",preview:"A 2-week research sprint tells you exactly what users need."},{day:"Day 3",subj:"$10K to avoid a $500K mistake",preview:"Research-informed decisions save 10-100x the cost of the research."},{day:"Day 7",subj:"332 citations. h-index 8. AWS Fintech R&D.",preview:"I bring academic rigor + industry speed to every sprint."},{day:"Day 14",subj:"2-week sprint. Presentation-ready findings.",preview:"Problem framing → interviews → analysis → deck. Fixed scope. Fixed price."}],
+    social:[{platform:"LinkedIn",content:"I've informed $2B+ in product decisions through UX research.\n\n332 academic citations. h-index 8.\nFormer AWS Fintech R&D.\nFull Professor at Gannon University.\n\nNow I run 2-week UX research sprints:\n\n→ Problem framing workshop\n→ 5-8 user interviews\n→ Affinity mapping + synthesis\n→ Presentation-ready findings deck\n→ Prioritized recommendations\n\n$10,000 flat. 2 weeks. Actionable insights.\n\nDM 'RESEARCH' to scope your sprint."},{platform:"Twitter/X",content:"2-week UX research sprint:\n\n- Problem framing\n- 5-8 user interviews\n- Affinity mapping\n- Insight synthesis\n- Findings deck\n\n$10K. 2 weeks.\n\nCredentials: PhD, 332 citations, AWS Fintech R&D\n\nThe research pays for itself by preventing one bad feature."}],
+    intake_fields:["Product/feature to research","Target users","Research questions (top 3)","Previous research (if any)","Timeline constraints"],
+    n8n_steps:["Participant recruitment (UserTesting/manual)","Interview scheduling (Trafft/Calendly)","Interview guide creation","Interview recording + transcription","Affinity mapping session","Insight synthesis","Findings deck creation","Handoff meeting + recording"]},
+
+  {id:"ux-ai-assessment",v:"UX Research",name:"AI/UX Readiness Assessment",price:12500,ret:0,desc:"Where AI adds value in your product: workflow analysis, opportunity ID, prototypes, roadmap.",features:["User workflow analysis","AI opportunity identification","3 prototype concepts","Effort/impact matrix","Implementation roadmap","Executive presentation"],persona:"SaaS (Series B+), healthcare, fintech",cs:"flint-ai",timeline:"3-4 weeks",
+    emails:[{day:"Day 0",subj:"Adding AI to your product? Don't guess.",preview:"I identify exactly where AI creates value and where it creates friction."},{day:"Day 3",subj:"Most AI features get abandoned after launch",preview:"Because they weren't designed for real user workflows."},{day:"Day 7",subj:"PhD engineer + AI builder + UX researcher",preview:"I've built AI agents AND studied how humans interact with them."},{day:"Day 14",subj:"$12.5K to get your AI strategy right the first time",preview:"3 prototype concepts, effort/impact matrix, implementation roadmap."}],
+    social:[{platform:"LinkedIn",content:"Most companies add AI features because competitors did.\n\nThat's not strategy. That's panic.\n\nMy AI/UX Readiness Assessment:\n\n1. Map real user workflows\n2. Identify where AI adds genuine value\n3. Identify where AI creates friction\n4. Prototype top 3 AI features\n5. Score effort vs impact\n6. Deliver implementation roadmap\n\nI've built AI agents (Insighto, Flint) AND researched human-AI interaction.\n\n$12,500. 3-4 weeks. Get it right the first time.\n\nDM 'AI-UX' for scoping."},{platform:"Twitter/X",content:"Before adding AI to your product:\n\n1. Map user workflows\n2. Find where AI adds VALUE (not novelty)\n3. Find where AI adds FRICTION\n4. Prototype the top 3\n5. Score effort vs impact\n6. Build a roadmap\n\nI do this for $12.5K in 3-4 weeks.\n\nPhD + AI builder + UX researcher = rare combo."}],
+    intake_fields:["Product description","Current user base size","AI features considered","Competitive AI offerings","Technical architecture overview"],
+    n8n_steps:["User workflow mapping sessions","AI opportunity scoring","Prototype concept development","Effort/impact matrix creation","Implementation roadmap drafting","Executive presentation preparation","Handoff documentation","Follow-up Q&A session"]},
+
+  {id:"ux-fractional",v:"UX Research",name:"Fractional Head of Research",price:0,ret:6500,desc:"10-20 hrs/week: research roadmap, team mentoring, methodology, stakeholder management, execution.",features:["Research roadmap","Team mentoring","Methodology selection","Stakeholder management","Hands-on execution","Monthly reports"],persona:"Growth-stage startups, interim coverage",cs:"aws-ux",timeline:"3-6 month engagement",
+    emails:[{day:"Day 0",subj:"You need a Head of Research but can't hire one yet",preview:"Fractional: 10-20 hrs/week, senior leadership, fraction of the cost."},{day:"Day 3",subj:"What a fractional Head of Research does",preview:"Roadmap, mentoring, methodology, stakeholder management — all part-time."},{day:"Day 7",subj:"My research credentials",preview:"PhD. Professor. 332 citations. AWS Fintech R&D. I bring the seniority your team needs."},{day:"Day 14",subj:"$6,500/mo for research leadership",preview:"That's 1/3 the cost of a full-time Head of Research. Same impact."}],
+    social:[{platform:"LinkedIn",content:"Hiring a Head of Research costs $180K+/year.\n\nA fractional one costs $6,500/month.\n\nWhat you get:\n→ Research roadmap creation\n→ Team mentoring (level up your junior researchers)\n→ Methodology selection + QA\n→ Stakeholder management + executive communication\n→ Hands-on execution when needed\n\n10-20 hours/week. 3-6 month engagements.\n\nCredentials:\n→ PhD in Engineering\n→ Full Professor\n→ 332 citations, h-index 8\n→ Former AWS UX Researcher\n\nDM 'FRACTIONAL' to discuss your needs."},{platform:"Twitter/X",content:"Fractional Head of Research:\n\n$6,500/mo vs $180K+/yr full-time\n\nYou get:\n- Research roadmap\n- Team mentoring\n- Methodology\n- Stakeholder management\n- Hands-on execution\n\n10-20 hrs/week. PhD + Professor + AWS alumni.\n\n3-6 month engagements."}],
+    intake_fields:["Current research team size","Biggest research gaps","Product roadmap priorities","Stakeholder landscape","Desired engagement length"],
+    n8n_steps:["Onboarding: team assessment + tool audit","Research roadmap creation","Weekly methodology sessions","Bi-weekly stakeholder updates","Monthly executive reports","Quarterly research review","Knowledge transfer documentation","Offboarding handoff plan"]},
+
+  {id:"ux-academic",v:"UX Research",name:"Academic-Industry Research Bridge",price:20000,ret:0,desc:"Translate research → products, or help teams publish. Lit review, methodology, co-authorship.",features:["Literature review","Methodology design","Data analysis","Co-authorship","Publication support","Conference presentation"],persona:"R&D labs, robotics startups, medical devices",cs:"academic",timeline:"3-6 months",
+    emails:[{day:"Day 0",subj:"Your R&D needs academic credibility",preview:"Published research = trust, grants, competitive advantage."},{day:"Day 3",subj:"From lab to market: bridging the gap",preview:"I translate academic research into product decisions (and vice versa)."},{day:"Day 7",subj:"332 citations. 8 h-index. Let's co-author.",preview:"My publication track record strengthens your research portfolio."},{day:"Day 14",subj:"$20K for a published paper with your name on it",preview:"Literature review, methodology, data analysis, co-authorship, submission."}],
+    social:[{platform:"LinkedIn",content:"The gap between academia and industry is a goldmine.\n\nAcademic research → product insights → competitive advantage\nIndustry problems → published research → credibility + grants\n\nI bridge both directions:\n→ Help companies publish peer-reviewed research\n→ Help startups translate academic findings into products\n→ Co-author papers with industry R&D teams\n\n332 citations. h-index 8. Full Professor.\n\n$20,000 per engagement. 3-6 months.\n\nDM 'PUBLISH' to scope your research."},{platform:"Twitter/X",content:"Most R&D teams never publish their work.\n\nThat's a missed opportunity for:\n- Credibility\n- Grant funding\n- Recruiting\n- Competitive advantage\n\nI help industry teams publish.\n332 citations. h-index 8.\n\n$20K per engagement. Co-authorship included."}],
+    intake_fields:["Research area/topic","Current data or findings","Publication target (journal/conference)","Team members and roles","Timeline constraints"],
+    n8n_steps:["Literature review scope definition","Systematic search + synthesis","Methodology design workshop","Data collection/analysis plan","Draft writing + iteration","Internal review process","Journal submission preparation","Revision management + resubmission"]},
+
+  {id:"re-creative",v:"Real Estate",name:"Creative Finance Deal Structuring",price:2000,ret:500,desc:"Subject-to, seller finance, lease option, wrap mortgage analysis and structuring.",features:["Deal analysis spreadsheet","Contract review guidance","Risk assessment","Closing checklist","Strategy call","Ongoing advisory"],persona:"New RE investors, SubTo community, wholesalers",cs:"erie-re",timeline:"3-5 days",
+    emails:[{day:"Day 0",subj:"Stop letting deals die because of financing",preview:"Subject-to, seller finance, lease options. I structure them for you."},{day:"Day 3",subj:"The creative finance cheat sheet",preview:"SubTo basics, seller finance terms, and when to use each strategy."},{day:"Day 7",subj:"I own multiple properties using creative finance",preview:"Erie, PA. SubTo community. Real deals, not theory."},{day:"Day 14",subj:"$2K to structure your next deal",preview:"Analysis, risk assessment, closing checklist, strategy call included."}],
+    social:[{platform:"LinkedIn",content:"Creative finance deal structuring:\n\n→ Subject-to (take over existing mortgage)\n→ Seller financing (seller becomes the bank)\n→ Lease options (control without ownership)\n→ Wrap mortgages (create a new note around existing)\n\nI own multiple properties in Erie, PA using these strategies.\n\nI structure deals for other investors:\n$2,000 per deal analysis + $500/mo advisory\n\nIncludes: spreadsheet, risk assessment, closing checklist, strategy call.\n\nDM 'DEAL' to submit your numbers."},{platform:"Twitter/X",content:"Your deal doesn't need bank financing.\n\nSubject-to: take over existing mortgage\nSeller finance: seller IS the bank\nLease option: control without ownership\n\nI structure these for $2K per deal.\n\nReal experience. Real properties. Erie, PA."}],
+    intake_fields:["Property address","Purchase price / ARV","Existing mortgage details","Seller motivation","Exit strategy"],
+    n8n_steps:["Deal data intake","Financial analysis (1% rule, cash-on-cash, DSCR)","Strategy recommendation","Risk matrix generation","Contract checklist creation","Closing timeline planning","Post-closing monitoring setup","Monthly advisory check-in"]},
+
+  {id:"re-tech",v:"Real Estate",name:"RE Investor Tech Stack",price:4000,ret:600,desc:"Full tech: CRM, lead automation, skip tracing, deal calculator, KPI dashboard, comm sequences.",features:["SuiteDash CRM setup","Lead management automation","Deal analysis calculator","KPI dashboard","Seller/buyer sequences","Skip tracing integration"],persona:"Investors doing 5-20 deals/year, wholesalers",cs:"dynasty-re",timeline:"2-3 weeks",
+    emails:[{day:"Day 0",subj:"Your RE investing business needs systems",preview:"CRM + lead automation + deal calculator + KPI dashboard. All connected."},{day:"Day 3",subj:"The tech stack for 20+ deals/year",preview:"Most investors cap out at 5-10 deals because they're doing everything manually."},{day:"Day 7",subj:"From spreadsheets to systems",preview:"$4K setup. Replaces manual processes that cap your deal flow."},{day:"Day 14",subj:"Your wholesaling competitors are automated. Are you?",preview:"Lead management, seller sequences, deal analysis, KPIs. All automated."}],
+    social:[{platform:"LinkedIn",content:"The RE investor tech stack:\n\n→ SuiteDash CRM (all contacts, properties, deals)\n→ Lead management automation (n8n)\n→ Skip tracing integration\n→ Deal analysis calculator (custom built)\n→ Seller/buyer communication sequences\n→ KPI dashboard (deals, revenue, pipeline)\n\nMost investors use spreadsheets and notebooks.\nThat caps your deal flow at 5-10/year.\n\nWith systems: 20+ deals/year.\n\n$4,000 setup. $600/mo management.\n\nDM 'RETECH' to level up your operations."},{platform:"Twitter/X",content:"RE investor tech stack for 20+ deals/year:\n\n✓ CRM (SuiteDash)\n✓ Lead automation (n8n)\n✓ Skip tracing\n✓ Deal calculator\n✓ KPI dashboard\n✓ Comm sequences\n\n$4K setup. $600/mo.\n\nStop using spreadsheets."}],
+    intake_fields:["Investment strategy (wholesale, flip, BRRRR, SubTo)","Current deal volume","Current tools/systems","Target market","Lead sources"],
+    n8n_steps:["SuiteDash CRM configuration","Lead intake automation","Skip tracing API integration","Deal analysis calculator deployment","Seller outreach sequence setup","Buyer list management","KPI dashboard creation","Monthly reporting automation"]}
+];
+
+const CASE_STUDIES = {
+  pacrop:{name:"PA CROP Services",headline:"From zero to 146 API endpoints and fully automated business operations",metrics:["146 API endpoints","25 KB articles","8 n8n workflows","Full A2P compliance","2,478-line admin panel","2,112-line client portal"],stack:"Next.js · Vercel · Neon · SuiteDash · n8n · Insighto · CallScaler · SMS-iT · Trafft · Acumbamail",story:"PA CROP Services needed to handle client onboarding, compliance tracking, invoicing, appointment scheduling, and multi-channel communication as a solo operator. Dynasty Empire built a comprehensive operations platform with AI voice automation, automated workflows, and a custom admin/client portal. The system went through 6 audit-fix cycles and now runs 24/7 without manual intervention."},
+  leados:{name:"LeadOS-Gov (sitbid.com)",headline:"Government SaaS platform — from concept to production architecture",metrics:["9-phase build spec","Multi-tenant ready","Stripe billing","Clerk SSO auth","Inngest jobs","shadcn/ui"],stack:"Next.js 14 · Vercel · Clerk · Neon Postgres · Drizzle · Inngest · Stripe · shadcn/ui",story:"Government agencies rely on paper-based systems for permits, licensing, and compliance. Dynasty Empire designed LeadOS-Gov as a multi-tenant SaaS platform with modern authentication, subscription billing, and background job processing. The monolithic architecture prioritizes operational simplicity while supporting multi-vertical white-labeling."},
+  immigrationsmarts:{name:"ImmigrationSmarts",headline:"Niche directory with 123 categories and 3 membership tiers",metrics:["123 practice area categories","3 membership tiers","Stripe payments","Google Maps integration","SEO programmatic pages","Mobile responsive"],stack:"Brilliant Directories · Stripe · Google APIs",story:"Immigration attorneys lacked a centralized, niche-specific directory. Dynasty Empire launched ImmigrationSmarts with granular practice area categorization, tiered membership monetization, and programmatic SEO pages for every category-location combination."},
+  "dynasty-dev":{name:"Dynasty Developer Theme",headline:"WordPress theme with 79 files, 13 modules, and 6 niche presets",metrics:["79 files","13 modules","6 niche presets","209 passing tests","Mobile responsive","SEO optimized"],stack:"WordPress · PHP · CSS · JavaScript",story:"Dynasty Developer is a proprietary WordPress theme built for rapid deployment of professional services websites. Six niche presets allow customization for attorneys, medical practices, financial advisors, real estate agents, consultants, and coaches."},
+  seomachine:{name:"Dynasty SEO Machine",headline:"Automated content pipeline: research → write → optimize → publish",metrics:["WordPress REST API","Auto-publish pipeline","SEO optimization","Multi-platform","AI generation","Zero human touch"],stack:"WriterZen · n8n · WordPress REST API · AI generation · Flint token auth",story:"The Dynasty SEO Machine automates the entire content marketing workflow from keyword research through writing, optimization, and publishing. Content is generated, SEO-optimized, and published to WordPress via REST API without human intervention."},
+  "dynasty-authority":{name:"Dynasty Authority Framework",headline:"Scalable authority site template for passive income",metrics:["Vercel hosted","Programmatic SEO","AI content generation","Ad placement ready","Affiliate infrastructure","Analytics built in"],stack:"Vercel · Next.js · AI content · Google Analytics",story:"The Dynasty Authority Framework is a gold-master template for deploying monetizable content websites at scale. Each site launches with programmatic SEO structure, 30-50 initial articles, and infrastructure for both ad revenue and affiliate income."},
+  "dynasty-video":{name:"Dynasty Video Factory",headline:"75+ video production tools for faceless YouTube channels",metrics:["75+ video tools","10-phase workflow","AI scripting","AI production","SEO optimization","Multi-platform"],stack:"Subscribr · Vadoo AI · Fliki · Taja · Castmagic · Viloud · WriterZen",story:"The Dynasty Video Factory leverages 75+ AppSumo video tools across a 10-phase production pipeline to create faceless YouTube content at scale. From niche research through production, SEO, and publishing — the entire workflow is automated."},
+  "dynasty-entity":{name:"Dynasty Empire Entity Structure",headline:"Multi-entity architecture for multi-generational wealth",metrics:["Wyoming Dynasty Trust","PNR Holdings LLC","6+ operating LLCs","Asset protection","Tax optimization","Estate planning"],stack:"Wyoming Trust · LLC formations · Inter-entity agreements",story:"The Dynasty Empire operates through a multi-entity structure designed for asset protection, tax efficiency, and multi-generational wealth transfer. A Wyoming Dynasty Trust owns PNR Holdings LLC, which in turn owns multiple operating LLCs across different business verticals."},
+  "aws-ux":{name:"AWS Fintech R&D",headline:"UX research informing $2B+ in product decisions",metrics:["$2B+ decisions informed","332 citations","h-index 8","50-70% muscle activation reduction","User interviews","Mixed methods"],stack:"UserTesting · Optimal Workshop · Figma · Mural · Statistical analysis",story:"As UX Researcher at AWS Fintech R&D, Dr. Ohu conducted research that informed product decisions worth $2B+. His academic research includes 332 citations and an h-index of 8, with findings demonstrating 50-70% surgeon muscle activation reduction through ergonomic interventions."},
+  "flint-ai":{name:"Flint AI Agent",headline:"Autonomous AI agent with multi-provider failover",metrics:["Python FastAPI bridge","Cloudflare tunnel","Multi-LLM failover","PM2/systemd","Autonomous execution","Telegram interface"],stack:"Python · FastAPI · Groq · Mistral · OpenRouter · Cloudflare · PM2 · Telegram",story:"Flint is Dynasty Empire's autonomous AI agent running on a Proxmox VM with a Python FastAPI bridge, Cloudflare tunnel, and multi-provider LLM failover engine (Groq → Mistral → OpenRouter). Flint executes tasks autonomously through a loop system with project auditing capabilities."}
+};
+
+// Helper to get closest case study
+function getCS(key) {
+  return CASE_STUDIES[key] || CASE_STUDIES.pacrop;
+}
+
+// State
+let currentView = 'home';
+let activeFilter = null;
+let selectedPkg = null;
+let activeTab = 'overview';
+
+function render() {
+  const app = document.getElementById('app');
+  if (selectedPkg) {
+    renderDetail(app);
+  } else {
+    renderHome(app);
+  }
+}
+
+function renderHome(app) {
+  const filtered = activeFilter ? PACKAGES.filter(p => p.v === activeFilter) : PACKAGES;
+  const verticals = [...new Set(PACKAGES.map(p => p.v))];
+
+  app.innerHTML = `
+    <section class="hero">
+      <div class="badge">42 Packages · 8 Verticals · 200+ Tools · Live Case Studies</div>
+      <h1>AI Automation & Web Dev.<br><em>Done-For-You.</em></h1>
+      <p>Production-grade systems built by a PhD engineer. Not templates — real infrastructure running in production today.</p>
+    </section>
+    <div class="filters container">
+      <button class="filter-btn ${!activeFilter?'active':''}" onclick="setFilter(null)">All (${PACKAGES.length})</button>
+      ${verticals.map(v => `<button class="filter-btn ${activeFilter===v?'active':''}" onclick="setFilter('${v}')">${v} (${PACKAGES.filter(p=>p.v===v).length})</button>`).join('')}
+    </div>
+    <div class="grid container">
+      ${filtered.map(pkg => `
+        <div class="pkg-card" onclick="selectPkg('${pkg.id}')">
+          <div class="bar" style="background:var(--gold)"></div>
+          <div class="vertical-tag" style="color:var(--gold)">${pkg.v}</div>
+          <h3>${pkg.name}</h3>
+          <div class="desc">${pkg.desc}</div>
+          <div>
+            ${pkg.price>0?`<span class="price">$${pkg.price.toLocaleString()}</span>`:''}
+            ${pkg.ret>0?`<span class="retainer" style="color:var(--gold);margin-left:${pkg.price>0?'12px':'0'}">${pkg.price>0?'+ ':''}$${pkg.ret}/mo</span>`:''}
+          </div>
+          <div class="tags">${pkg.features.slice(0,3).map(f=>`<span>${f}</span>`).join('')}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderDetail(app) {
+  const pkg = PACKAGES.find(p => p.id === selectedPkg);
+  const cs = getCS(pkg.cs);
+  const tabs = ['overview','emails','social','case-study','intake','n8n','proposal'];
+
+  app.innerHTML = `
+    <div class="detail active">
+      <div class="container">
+        <button class="back-btn" onclick="goBack()">← Back to packages</button>
+
+        <div class="detail-hero" style="background:var(--card);border-color:rgba(251,191,36,.2)">
+          <div class="label" style="color:var(--gold)">${pkg.v}</div>
+          <h1>${pkg.name}</h1>
+          <div class="subdesc">${pkg.desc}</div>
+          <div class="stat-boxes">
+            ${pkg.price>0?`<div class="stat-box"><div class="stat-label">Setup</div><div class="stat-value" style="color:var(--gold)">$${pkg.price.toLocaleString()}</div></div>`:''}
+            ${pkg.ret>0?`<div class="stat-box"><div class="stat-label">Monthly</div><div class="stat-value" style="color:var(--gold)">$${pkg.ret.toLocaleString()}/mo</div></div>`:''}
+            <div class="stat-box"><div class="stat-label">Timeline</div><div class="stat-value">${pkg.timeline}</div></div>
+          </div>
+        </div>
+
+        <!-- TAB NAV -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px">
+          ${tabs.map(t => `<button class="filter-btn ${activeTab===t?'active':''}" onclick="setTab('${t}')" style="text-transform:capitalize">${t.replace('-',' ')}</button>`).join('')}
+        </div>
+
+        <!-- TAB CONTENT -->
+        ${activeTab==='overview'?renderOverview(pkg,cs):''}
+        ${activeTab==='emails'?renderEmails(pkg):''}
+        ${activeTab==='social'?renderSocial(pkg):''}
+        ${activeTab==='case-study'?renderCaseStudy(pkg,cs):''}
+        ${activeTab==='intake'?renderIntake(pkg):''}
+        ${activeTab==='n8n'?renderN8n(pkg):''}
+        ${activeTab==='proposal'?renderProposal(pkg,cs):''}
+
+        <div class="detail-cta" style="background:var(--card);border-color:rgba(251,191,36,.2)">
+          <h3>Ready to get started with ${pkg.name}?</h3>
+          <p>Book a 30-minute strategy call. No pressure — just a conversation about fit.</p>
+          <button style="background:var(--gold);color:#000">Book Strategy Call →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderOverview(pkg, cs) {
+  return `
+    <div class="detail-grid">
+      <div class="detail-panel">
+        <h3 style="color:var(--gold)">What You Get</h3>
+        ${pkg.features.map(f => `<div class="check-item"><span class="check" style="color:var(--gold)">✓</span><span>${f}</span></div>`).join('')}
+      </div>
+      <div class="detail-panel">
+        <h3 style="color:var(--gold)">Best For</h3>
+        <p style="color:#d4d4d8;font-size:14px;line-height:1.7">${pkg.persona}</p>
+        <h3 style="color:var(--gold);margin-top:24px">Proven By</h3>
+        <p style="font-weight:600;font-size:14px">${cs.name}</p>
+        <p style="color:var(--muted);font-size:13px;margin-top:6px">${cs.headline}</p>
+        <div class="metric-tags" style="margin-top:12px">
+          ${cs.metrics.slice(0,4).map(m => `<span class="metric-tag" style="background:rgba(251,191,36,.1);color:var(--gold)">${m}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderEmails(pkg) {
+  return `
+    <div class="email-section">
+      <h3 style="color:var(--gold)">📧 Email Outreach Sequence (${pkg.emails.length} emails)</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Cold outreach sequence for Acumbamail. Copy, customize, and deploy.</p>
+      ${pkg.emails.map(e => `
+        <div class="email-item">
+          <div class="day" style="color:var(--gold)">${e.day}</div>
+          <div class="subject">Subject: ${e.subj}</div>
+          <div class="preview">${e.preview}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderSocial(pkg) {
+  return `
+    <div class="social-section">
+      <h3 style="color:var(--gold)">📱 Social Media Content</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Ready-to-post content for LinkedIn and Twitter/X.</p>
+      ${pkg.social.map(s => `
+        <div class="social-post">
+          <div class="platform" style="color:var(--gold)">${s.platform}</div>
+          <div class="content">${s.content}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderCaseStudy(pkg, cs) {
+  return `
+    <div class="case-study-box">
+      <h3 style="color:var(--gold)">📊 Case Study: ${cs.name}</h3>
+      <div class="headline">${cs.headline}</div>
+      <div class="metric-tags">
+        ${cs.metrics.map(m => `<span class="metric-tag" style="background:rgba(251,191,36,.1);color:var(--gold)">${m}</span>`).join('')}
+      </div>
+      <p style="color:#d4d4d8;font-size:14px;line-height:1.7;margin:16px 0">${cs.story}</p>
+      <div class="tech-stack">Stack: ${cs.stack}</div>
+    </div>
+  `;
+}
+
+function renderIntake(pkg) {
+  return `
+    <div class="intake-section">
+      <h3 style="color:var(--gold)">📋 Client Intake Form — ${pkg.name}</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Required information to begin this engagement.</p>
+      <div class="form-field"><label>Full Name</label><input type="text" placeholder="Your name"></div>
+      <div class="form-field"><label>Email</label><input type="email" placeholder="you@company.com"></div>
+      <div class="form-field"><label>Company</label><input type="text" placeholder="Company name"></div>
+      <div class="form-field"><label>Website</label><input type="url" placeholder="https://"></div>
+      <div class="form-field"><label>Annual Revenue</label>
+        <select><option>Select...</option><option>Under $100K</option><option>$100K-$500K</option><option>$500K-$1M</option><option>$1M-$5M</option><option>$5M+</option></select>
+      </div>
+      ${pkg.intake_fields.map(f => `<div class="form-field"><label>${f}</label><textarea placeholder="Describe..."></textarea></div>`).join('')}
+      <div class="form-field"><label>What does success look like?</label><textarea placeholder="Your #1 goal for this project..."></textarea></div>
+      <button class="submit-btn">Submit & Book Strategy Call →</button>
+    </div>
+  `;
+}
+
+function renderN8n(pkg) {
+  return `
+    <div class="email-section">
+      <h3 style="color:var(--gold)">⚙️ n8n Onboarding Workflow — ${pkg.name}</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Automated onboarding sequence triggered on client sign-up.</p>
+      ${pkg.n8n_steps.map((step, i) => `
+        <div class="email-item">
+          <div class="day" style="color:var(--gold)">Step ${i+1}</div>
+          <div class="subject">${step}</div>
+        </div>
+      `).join('')}
+      <div style="margin-top:16px;padding:16px;background:rgba(251,191,36,.06);border-radius:8px;border:1px solid rgba(251,191,36,.15)">
+        <p style="font-size:13px;color:var(--muted)"><strong style="color:var(--gold)">Master trigger:</strong> Stripe webhook (checkout.session.completed) → extracts client data → runs package-specific workflow above → sends welcome email + SMS → creates SuiteDash project → schedules kickoff call.</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderProposal(pkg, cs) {
+  return `
+    <div class="proposal-section">
+      <h3 style="color:var(--gold)">📄 Proposal Preview — ${pkg.name}</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Branded proposal template ready for client presentation.</p>
+
+      <div class="proposal-page">
+        <div class="gold-bar"></div>
+        <h4>DYNASTY EMPIRE LLC — PROPOSAL</h4>
+        <p><strong>${pkg.name}</strong><br>Prepared for: [Client Name]<br>Date: [Date]<br>Prepared by: Dr. Ikechukwu Ohu, CEO</p>
+      </div>
+
+      <div class="proposal-page">
+        <div class="gold-bar"></div>
+        <h4>Executive Summary</h4>
+        <p>${pkg.desc}</p>
+        <p style="margin-top:12px"><strong>Investment:</strong> ${pkg.price>0?'$'+pkg.price.toLocaleString()+' setup':''} ${pkg.price>0&&pkg.ret>0?' + ':''}${pkg.ret>0?'$'+pkg.ret.toLocaleString()+'/month':''}<br>
+        <strong>Timeline:</strong> ${pkg.timeline}<br>
+        <strong>Best for:</strong> ${pkg.persona}</p>
+      </div>
+
+      <div class="proposal-page">
+        <div class="gold-bar"></div>
+        <h4>Deliverables</h4>
+        <ol>${pkg.features.map(f => `<li style="margin-bottom:6px">${f}</li>`).join('')}</ol>
+      </div>
+
+      <div class="proposal-page">
+        <div class="gold-bar"></div>
+        <h4>Case Study: ${cs.name}</h4>
+        <p>${cs.headline}</p>
+        <p style="margin-top:8px"><em>${cs.metrics.join(' · ')}</em></p>
+        <p style="margin-top:8px;font-size:11px;color:#666">Stack: ${cs.stack}</p>
+      </div>
+
+      <div class="proposal-page">
+        <div class="gold-bar"></div>
+        <h4>Why Dynasty Empire</h4>
+        <ul>
+          <li>PhD in Engineering · Full Professor at Gannon University</li>
+          <li>332 academic citations · h-index 8</li>
+          <li>Former AWS Fintech R&D UX Researcher</li>
+          <li>200+ production tools · $75K+ arsenal value</li>
+          <li>Live systems: PA CROP · LeadOS-Gov · ImmigrationSmarts · Dynasty Launcher</li>
+          <li>Multi-entity business operator (Wyoming Trust → Holdings → 6+ LLCs)</li>
+        </ul>
+      </div>
+
+      <div class="proposal-page">
+        <div class="gold-bar"></div>
+        <h4>Investment & Next Steps</h4>
+        <p>${pkg.price>0?'<strong>Setup fee:</strong> $'+pkg.price.toLocaleString()+' (50% on signing, 50% on delivery)<br>':''}
+        ${pkg.ret>0?'<strong>Monthly retainer:</strong> $'+pkg.ret.toLocaleString()+'/month (begins after launch)<br>':''}
+        <strong>Payment:</strong> Stripe, ACH, or wire transfer</p>
+        <p style="margin-top:12px"><strong>Next steps:</strong><br>
+        1. Sign the attached SOW<br>
+        2. Submit 50% deposit<br>
+        3. Complete intake form<br>
+        4. Book kickoff call<br>
+        5. We start building within 48 hours</p>
+      </div>
+    </div>
+  `;
+}
+
+// Navigation functions
+function setFilter(v) { activeFilter = v; selectedPkg = null; render(); window.scrollTo(0,300); }
+function selectPkg(id) { selectedPkg = id; activeTab = 'overview'; render(); window.scrollTo(0,0); }
+function goBack() { selectedPkg = null; render(); }
+function setTab(t) { activeTab = t; render(); }
+function showSection(s) { /* Future: global intake form */ }
+
+// Initial render
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+{
+  "name": "Dynasty_Master_Client_Onboarding",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dynasty-onboarding",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "trigger-webhook",
+      "name": "Stripe Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst session = body.data?.object || body;\n\nreturn [{\n  json: {\n    client_name: session.customer_details?.name || session.metadata?.client_name || 'New Client',\n    client_email: session.customer_details?.email || session.metadata?.client_email || '',\n    client_phone: session.metadata?.client_phone || '',\n    package_id: session.metadata?.package_id || 'unknown',\n    package_name: session.metadata?.package_name || 'Dynasty Service',\n    amount_paid: (session.amount_total || 0) / 100,\n    stripe_session_id: session.id || '',\n    stripe_customer_id: session.customer || '',\n    payment_status: session.payment_status || 'paid',\n    created_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "parse-stripe",
+      "name": "Parse Stripe Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.suitedash.com/secure-api/contact",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "first_name", "value": "={{ $json.client_name.split(' ')[0] }}"},
+            {"name": "last_name", "value": "={{ $json.client_name.split(' ').slice(1).join(' ') }}"},
+            {"name": "email", "value": "={{ $json.client_email }}"},
+            {"name": "phone", "value": "={{ $json.client_phone }}"},
+            {"name": "company", "value": "={{ $json.package_name }}"},
+            {"name": "tags", "value": "dynasty-client,{{ $json.package_id }}"}
+          ]
+        },
+        "options": {}
+      },
+      "id": "create-suitedash-contact",
+      "name": "Create SuiteDash Contact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 160]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://n8n.audreysplace.place/api/v1/executions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ client_name: $json.client_name, client_email: $json.client_email, package_id: $json.package_id, package_name: $json.package_name, amount: $json.amount_paid, status: 'onboarding' }) }}",
+        "options": {}
+      },
+      "id": "log-to-neon",
+      "name": "Log to Neon DB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300],
+      "notes": "POST to PA CROP API endpoint to log new client"
+    },
+    {
+      "parameters": {
+        "fromEmail": "ike@dynastyempire.com",
+        "toEmail": "={{ $json.client_email }}",
+        "subject": "Welcome to Dynasty Empire — {{ $json.package_name }}",
+        "emailType": "html",
+        "html": "<div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;'><div style='background:#0A0A0C;padding:32px;border-radius:12px 12px 0 0;'><h1 style='color:#FBBF24;margin:0;font-size:24px;'>DYNASTY EMPIRE</h1></div><div style='background:#18181B;padding:32px;color:#D4D4D8;'><h2 style='color:#FAFAFA;'>Welcome, {{ $json.client_name }}!</h2><p>Thank you for choosing Dynasty Empire. Your <strong style='color:#FBBF24;'>{{ $json.package_name }}</strong> engagement is now active.</p><h3 style='color:#FBBF24;'>What happens next:</h3><ol><li>Review your Service Agreement (attached to your confirmation email)</li><li>Complete your <a href='https://dynasty-services.vercel.app' style='color:#FBBF24;'>intake form</a></li><li>Book your kickoff call: <a href='https://trafft.dynastyempire.com' style='color:#FBBF24;'>Schedule here</a></li><li>We start building within 48 hours of kickoff</li></ol><p>Your project manager is Dr. Ikechukwu Ohu. Reply to this email with any questions.</p><p style='color:#71717A;margin-top:32px;font-size:12px;'>Dynasty Empire LLC · 924 W 23rd St, Erie, PA 16502</p></div></div>",
+        "options": {}
+      },
+      "id": "welcome-email",
+      "name": "Send Welcome Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [900, 160]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.sms-it.com/api/v1/sms/send",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "to", "value": "={{ $json.client_phone }}"},
+            {"name": "message", "value": "Welcome to Dynasty Empire, {{ $json.client_name.split(' ')[0] }}! 🏛️ Your {{ $json.package_name }} engagement is live. Check your email for next steps, or reply here with questions. — Dr. Ike"},
+            {"name": "from", "value": "+1XXXXXXXXXX"}
+          ]
+        },
+        "options": {}
+      },
+      "id": "welcome-sms",
+      "name": "Send Welcome SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://hooks.slack.com/services/YOUR_SLACK_WEBHOOK",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: '🏛️ *New Dynasty Empire Client*\\n*Name:* ' + $json.client_name + '\\n*Package:* ' + $json.package_name + '\\n*Amount:* $' + $json.amount_paid + '\\n*Email:* ' + $json.client_email }) }}",
+        "options": {}
+      },
+      "id": "slack-alert",
+      "name": "Slack New Client Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 440]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "days", "daysInterval": 1}]
+        }
+      },
+      "id": "drip-trigger",
+      "name": "Daily Drip Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 600],
+      "notes": "Checks for clients needing drip emails"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, client: $json.client_name, package: $json.package_name }) }}",
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Stripe Webhook": {"main": [[{"node": "Parse Stripe Data", "type": "main", "index": 0}]]},
+    "Parse Stripe Data": {"main": [[{"node": "Create SuiteDash Contact", "type": "main", "index": 0}, {"node": "Log to Neon DB", "type": "main", "index": 0}, {"node": "Send Welcome SMS", "type": "main", "index": 0}, {"node": "Slack New Client Alert", "type": "main", "index": 0}]]},
+    "Create SuiteDash Contact": {"main": [[{"node": "Send Welcome Email", "type": "main", "index": 0}]]},
+    "Send Welcome Email": {"main": [[{"node": "Respond OK", "type": "main", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"},
+  "tags": [{"name": "dynasty-empire"}, {"name": "onboarding"}]
+}
